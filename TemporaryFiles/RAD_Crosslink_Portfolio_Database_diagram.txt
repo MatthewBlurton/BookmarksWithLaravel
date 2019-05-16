@@ -1,0 +1,53 @@
+// go to
+// https://dbdiagram.io/d
+// then paste the contents of this file into the side panel
+
+// cross-link
+Table users {
+  id int [primary key]
+  username varchar(50) [not null, unique]
+  password varchar(512) [not null]
+}
+
+Table bookmarks {
+  id int [primary key]
+  description varchar(255)
+  thumbnail varchar(255)
+  user_id int [ref: > users.id]
+}
+
+Table tags {
+  id int [primary key]
+  name varchar(50)
+}
+
+Table bookmarks_tags {
+  bookmark_id int [primary key, ref: > bookmarks.id]
+  tag_id int [primary key, ref: > tags.id]
+}
+
+Table roles {
+  id int [primary key]
+  name varchar(50) [not null, unique]
+  description varchar(255)
+}
+
+Table users_roles {
+  user_id int [primary key, ref: > users.id]
+  role_id int [primary key, ref: > roles.id]
+}
+
+Table profiles {
+  user_id int [primary key, ref: > users.id]
+  photo varchar(255)
+  email varchar(320)
+  first_name varchar(255)
+  last_name varchar(255)
+}
+
+Table social_media_links {
+  id int [primary key]
+  name varchar(50)
+  tag varchar(255)
+  profile_id int [ref: > profiles.user_id]
+}
