@@ -1,0 +1,9 @@
+@if ($errors->any())
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Errors occurred</h4>
+        <hr>
+            @foreach ($errors->all() as $aError)
+                <p class="mb-0">{{ $aError }}</p>
+            @endforeach
+    </div>
+@endif

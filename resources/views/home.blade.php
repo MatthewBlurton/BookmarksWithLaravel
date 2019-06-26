@@ -9,7 +9,6 @@
                 <div class="card-body">
                     @auth
                         <h2>Bookmarks</h2>
-                        
                     @endauth
                 </div>
             </div>
