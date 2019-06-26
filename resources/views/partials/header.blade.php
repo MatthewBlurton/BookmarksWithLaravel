@@ -38,6 +38,7 @@
                                                         document.getElementById('logout-form').submit();">
                             {{ __('Logout') }}
                         </a>
+                        <a href="http://" target="_blank" rel="noopener noreferrer" class="dropdown-item">Role: @role('user') User @endrole</a>
 
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                             @csrf
