@@ -19,7 +19,6 @@ class CreateBookmarkTagPivotTable extends Migration
             $table->foreign('bookmark_id')->references('id')->on('bookmarks')->onDelete('cascade');
             $table->bigInteger('tag_id')->unsigned()->index();
             $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
-            $table->timestamps();
         });
     }
 

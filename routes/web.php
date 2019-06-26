@@ -17,6 +17,9 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('home', 'HomeController@index')->name('home');
 
 Route::resource('bookmarks', 'BookmarksController');
+
+Route::patch('tags/{bookmark}', 'TagsController@update')->name('tags.update');
+Route::delete('tags/{bookmark}/{tag}', 'TagsController@destroy')->name('tags.destroy');

@@ -5,7 +5,9 @@
 
     <div class="row">
         <div class="col">
-            @include('partials.errors')
+            @component('components.errors')
+                <strong>Whoops!</strong> Could not create a new bookmark for the following reasons.
+            @endcomponent
         </div>
     </div>
     <form method="POST" action="/bookmarks">
@@ -30,18 +32,6 @@
                 <textarea name="description" id="bookmark-description" class="form-control"
                     aria-describedBy="descriptionHelp"
                     placeholder="Enter Description">{{ old('description') }}</textarea>
-            </div>
-
-        </div>
-        <div class="form-group row">
-            <label for="bookmark-tags" class="col-sm-2 col-form-label">Tags</label>
-            <div class="col-sm-5">
-                <input type="text" id="bookmark-tags" placeholder="Enter tag to add">
-                <button ></button>
-            </div>
-            <div class="col-sm-5">
-                <ul name="tags">
-                </ul>
             </div>
         </div>
         <button type="submit" class="btn btn-primary">Done</button>
