@@ -18,6 +18,11 @@ class Bookmark extends Model
         return $this->belongsToMany('App\Tag');
     }
 
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
+
     public function attachTag($tagName)
     {
         $tag = Tag::firstOrCreate(['name' => $tagName]);
@@ -27,10 +32,6 @@ class Bookmark extends Model
     public function detachTag(Tag $tag)
     {
         $this->tags()->detach([$tag->id]);
-        if ($tag->bookmarks()->count() == 0)
-        {
-            $tag->delete();
-        }
     }
 
 }

@@ -39,4 +39,9 @@ class User extends Authenticatable
     ];
 
     use HasRoles;
+
+    public function bookmarks()
+    {
+        return $this->hasMany('App\Bookmark');
+    }
 }

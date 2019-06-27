@@ -17,6 +17,6 @@ class BookmarksTableSeeder extends Seeder
                     $tag = factory('App\Tag')->make();
                     $bookmark->attachTag($tag->name);
                 }
-            });
+        });
     }
 }

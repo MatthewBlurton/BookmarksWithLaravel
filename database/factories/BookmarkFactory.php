@@ -10,5 +10,6 @@ $factory->define(Bookmark::class, function (Faker $faker) {
         'title' => $faker->sentence(5),
         'url' => $faker->url,
         'description' => $faker->text(),
+        'user_id' => 1,
     ];
 });
