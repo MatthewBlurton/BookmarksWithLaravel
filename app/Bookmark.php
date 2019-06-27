@@ -9,7 +9,7 @@ use App\Tag;
 class Bookmark extends Model
 {
     protected $fillable = [
-        'title', 'url', 'description'
+        'title', 'url', 'description', 'is_public', 'user_id'
     ];
 
     // protected $guarded = [];
@@ -33,5 +33,4 @@ class Bookmark extends Model
     {
         $this->tags()->detach([$tag->id]);
     }
-
 }

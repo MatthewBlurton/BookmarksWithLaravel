@@ -16,15 +16,15 @@ class RolesAndPermissionsSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Create permissions
+        // User privelages
         Permission::create(['name' => 'browse users']);
         Permission::create(['name' => 'read users']);
         Permission::create(['name' => 'edit users']);
         Permission::create(['name' => 'add users']);
         Permission::create(['name' => 'delete users']);
         Permission::create(['name' => 'search users']);
-        Permission::create(['name' => 'reset password']);
 
+        // Tag privelages
         Permission::create(['name' => 'browse tags']);
         Permission::create(['name' => 'read tags']);
         Permission::create(['name' => 'edit tags']);
@@ -32,6 +32,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'delete tags']);
         Permission::create(['name' => 'search tags']);
 
+        // Bookmark privelages
         Permission::create(['name' => 'browse bookmarks']);
         Permission::create(['name' => 'read bookmarks']);
         Permission::create(['name' => 'edit bookmarks']);
@@ -39,6 +40,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'delete bookmarks']);
         Permission::create(['name' => 'search bookmarks']);
 
+        // Profile privelages
         Permission::create(['name' => 'browse profiles']);
         Permission::create(['name' => 'read profiles']);
         Permission::create(['name' => 'edit profiles']);
@@ -46,43 +48,32 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'delete profiles']);
         Permission::create(['name' => 'search profiles']);
 
-        Permission::create(['name' => 'limited actions on users only']);
-        Permission::create(['name' => 'actions on all users']);
-        Permission::create(['name' => 'actions on all tags']);
-        Permission::create(['name' => 'actions on all bookmarks']);
-        Permission::create(['name' => 'actions on all profiles']);
+
+        // Admin level privelages
+        Permission::create(['name' => 'bread ordinary users']);
+        Permission::create(['name' => 'breads all users']);
+        Permission::create(['name' => 'breads all tags']);
+        Permission::create(['name' => 'breads all bookmarks']);
+        Permission::create(['name' => 'breads all profiles']);
 
 
         // Bundle permissions together
         // Users
-        $usersBrsBundle = [
-            'browse users',
-            'read users',
-            'search users'
-        ];
-        $usersBreadsBundle = $usersBrsBundle;
-        array_push($usersBreadsBundle, 'edit users', 'add users', 'delete users');
+        $usersEdBundle = ['edit users', 'delete users'];
 
         // Tags
-        $tagsBrsBundle = [
-            'browse users',
-            'read users',
-            'search users'
+        $tagsEadBundle = [
+            'edit tags',
+            'add tags',
+            'delete tags'
         ];
-        $tagsBrasBundle = $tagsBrsBundle;
-        array_push($tagsBrasBundle, 'add tags');
-
-        $tagsBreadsBundle = $tagsBrsBundle;
-        array_push($tagsBreadsBundle, 'edit tags', 'add tags', 'delete tags');
 
         // Bookmarks
-        $bookmarksBrsBundle = [
-            'browse bookmarks',
-            'read bookmarks',
-            'search bookmarks'
+        $bookmarksEadBundle = [
+            'edit bookmarks',
+            'add bookmarks',
+            'delete bookmarks'
         ];
-        $bookmarksBreadsBundle = $bookmarksBrsBundle;
-        array_push($bookmarksBreadsBundle, 'edit bookmarks', 'add bookmarks', 'delete bookmarks');
 
         $profilesBreadsBundle = [
             'browse profiles',
@@ -95,31 +86,28 @@ class RolesAndPermissionsSeeder extends Seeder
 
 
         // Create roles and assign created permissions
-        Role::create(['name' => 'suspended'])
-            ->givePermissionTo('reset password');
-        Role::create(['name' => 'guest'])
-            ->givePermissionTo($usersBrsBundle)
-            ->givePermissionTo($tagsBrsBundle)
-            ->givePermissionTo($bookmarksBrsBundle);
+        Role::create(['name' => 'suspended']);
         Role::create(['name' => 'user'])
-            ->givePermissionTo($usersBrsBundle)
-            ->givePermissionTo($tagsBreadsBundle)
-            ->givePermissionTo($bookmarksBreadsBundle)
+            ->givePermissionTo($tagsEadBundle)
+            ->givePermissionTo($bookmarksEadBundle)
             ->givePermissionTo($profilesBreadsBundle);
         Role::create(['name' => 'user-admin'])
-            ->givePermissionTo($usersBreadsBundle)
-            ->givePermissionTo($profilesBreadsBundle)
-            ->givePermissionTo('limited actions on users only');
-        Role::create(['name' => 'admin'])
-            ->givePermissionTo($usersBreadsBundle)
-            ->givePermissionTo($tagsBreadsBundle)
-            ->givePermissionTo($bookmarksBreadsBundle)
+            ->givePermissionTo($usersEdBundle)
             ->givePermissionTo($profilesBreadsBundle)
             ->givePermissionTo([
-                'actions on all users',
-                'actions on all tags',
-                'actions on all bookmarks',
-                'actions on all profiles',
+                'bread ordinary users',
+                'breads all profiles',
+            ]);
+        Role::create(['name' => 'admin'])
+            ->givePermissionTo($usersEdBundle)
+            ->givePermissionTo($tagsEadBundle)
+            ->givePermissionTo($bookmarksEadBundle)
+            ->givePermissionTo($profilesBreadsBundle)
+            ->givePermissionTo([
+                'breads all users',
+                'breads all tags',
+                'breads all bookmarks',
+                'breads all profiles',
             ]);
     }
 }

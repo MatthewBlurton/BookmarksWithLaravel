@@ -16,6 +16,7 @@ class UpdateBookmarksTable extends Migration
         Schema::table('bookmarks', function(Blueprint $table) {
             $table->bigInteger('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->boolean('is_public')->default(true);
         });
     }
 
@@ -28,6 +29,7 @@ class UpdateBookmarksTable extends Migration
     {
         Schema::table('bookmarks', function(Blueprint $table) {
             $table->dropColumn('user_id');
+            $table->dropColumn('is_public');
         });
     }
 }
