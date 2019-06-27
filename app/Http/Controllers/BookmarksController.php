@@ -13,17 +13,23 @@ class BookmarksController extends Controller
     public function __construct()
     {
         // Authorization middleware (if the user does not have appropriate permissions, do a not currently logged in error)
-        $this->middleware(['permission:edit bookmarks'])->only('edit|update');
-        $this->middleware(['permission:add bookmarks'])->only('create|store');
+        $this->middleware(['permission:edit bookmarks'])->only(['edit', 'update']);
+        $this->middleware(['permission:add bookmarks'])->only(['create', 'store']);
         $this->middleware(['permission:delete bookmarks'])->only('destroy');
     }
 
     // Show all bookmarks
     function index()
     {
+        $bookmarks = [];
         // Only grab bookmarks when it is either associated with the current logged in user, or if the bookmark is public
-        $bookmarks = auth()->user()->hasPermissionTo('breads all bookmarks') ? Bookmark::all() :
-            Bookmark::where('user_id', auth()->id())->orWhere('is_public', true)->get();
+        if (auth()->check()) {
+            $bookmarks = auth()->user()->hasPermissionTo('access all bookmarks')
+                        ? Bookmark::all() : Bookmark::where('user_id', auth()->id())->orWhere('is_public', true)->get();
+        }
+        else {
+            $bookmarks = Bookmark::where('is_public', true)->get();
+        }
 
         return view (
             'bookmarks.index',
@@ -32,7 +38,7 @@ class BookmarksController extends Controller
     }
 
     // Allow user to create a new bookmark
-    public function create ()
+    public function create()
     {
         return view('bookmarks.create');
     }

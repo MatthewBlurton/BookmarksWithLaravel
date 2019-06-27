@@ -23,6 +23,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        // Change the default functionality of successfully logging in to redirect to the index page
+        return redirect('/');
     }
 }

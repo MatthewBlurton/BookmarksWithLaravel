@@ -48,14 +48,12 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'delete profiles']);
         Permission::create(['name' => 'search profiles']);
 
-
         // Admin level privelages
-        Permission::create(['name' => 'bread ordinary users']);
-        Permission::create(['name' => 'breads all users']);
-        Permission::create(['name' => 'breads all tags']);
-        Permission::create(['name' => 'breads all bookmarks']);
-        Permission::create(['name' => 'breads all profiles']);
-
+        Permission::create(['name' => 'access all ordinary users']);
+        Permission::create(['name' => 'access all users']);
+        Permission::create(['name' => 'access all tags']);
+        Permission::create(['name' => 'access all bookmarks']);
+        Permission::create(['name' => 'access all profiles']);
 
         // Bundle permissions together
         // Users
@@ -95,8 +93,8 @@ class RolesAndPermissionsSeeder extends Seeder
             ->givePermissionTo($usersEdBundle)
             ->givePermissionTo($profilesBreadsBundle)
             ->givePermissionTo([
-                'bread ordinary users',
-                'breads all profiles',
+                'access all ordinary users',
+                'access all profiles',
             ]);
         Role::create(['name' => 'admin'])
             ->givePermissionTo($usersEdBundle)
@@ -104,10 +102,10 @@ class RolesAndPermissionsSeeder extends Seeder
             ->givePermissionTo($bookmarksEadBundle)
             ->givePermissionTo($profilesBreadsBundle)
             ->givePermissionTo([
-                'breads all users',
-                'breads all tags',
-                'breads all bookmarks',
-                'breads all profiles',
+                'access all users',
+                'access all tags',
+                'access all bookmarks',
+                'access all profiles',
             ]);
     }
 }

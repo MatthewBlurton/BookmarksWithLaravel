@@ -17,7 +17,7 @@ Route::get('/', function () {
 
 Auth::routes();
 
-// Route::get('home', 'HomeController@index')->name('home');
+Route::get('home', 'HomeController@index')->name('home');
 
 Route::resource('bookmarks', 'BookmarksController');
 
@@ -27,12 +27,6 @@ Route::delete('users/{user}', 'UsersController@destroy')->name('users.destroy');
 Route::match(['put', 'patch'], 'users/{user}', 'UsersController@update')->name('users.update');
 Route::match(['get', 'head'], 'users/{user}', 'UsersController@show')->name('users.show');
 Route::match(['get', 'head'], 'users/{user}/edit', 'UsersController@edit')->name('users.edit');
-
-/*
-PUT|PATCH update
-GET|HEAD show
-GET|HEAD edit
-*/
 
 // Route for assigning and removing tags
 Route::match(['get', 'head'], 'tags', 'TagsController@index')->name('tags');

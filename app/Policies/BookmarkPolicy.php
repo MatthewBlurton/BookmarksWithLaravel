@@ -55,7 +55,7 @@ class BookmarkPolicy
      */
     private function checkAuthorized(User $user, Bookmark $bookmark)
     {
-        return $user->hasPermissionTo('breads all bookmarks')
+        return $user->hasPermissionTo('access all bookmarks')
             || $bookmark->user_id === $user->id;
     }
 }

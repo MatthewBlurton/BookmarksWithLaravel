@@ -11,8 +11,8 @@ class UsersController extends Controller
     public function __construct()
     {
         // Authorization middleware (if the user does not have appropriate permissions, do a not currently logged in error)
-        $this->middleware(['permission:edit users'])->only('edit|update');
-        $this->middleware(['permission:add users'])->only('create|store');
+        $this->middleware(['permission:edit users', 'verified'])->only(['edit', 'update']);
+        $this->middleware(['permission:add users'])->only(['create', 'store']);
         $this->middleware(['permission:delete users'])->only('destroy');
     }
 
@@ -37,18 +37,21 @@ class UsersController extends Controller
     // Modifies the user
     public function edit(User $user)
     {
+        $this->authorize('update', $user);
         return view('users.edit', compact('user'));
     }
 
     // Performs an update to the selected user
     public function update(User $user)
     {
+        $this->authorize('update', $user);
         return redirect("users.$user->id");
     }
 
-    // Delete the selected bookmark
+    // Suspend the selected user
     public function destroy(User $user)
     {
+        $this->authorize('delete', $user);
         return redirect("users.$user->id");
     }
 

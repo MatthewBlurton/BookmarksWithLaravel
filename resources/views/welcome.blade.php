@@ -67,8 +67,16 @@
         <div class="flex-center position-ref full-height">
             @if (Route::has('login'))
                 <div class="top-right links">
+                    {{-- If logged in re --}}
                     @auth
-                        <a href="{{ url('/bookmarks') }}">Bookmarks</a>
+                        <a href="{{ route('logout') }}" onclick="event.preventDefault();
+                            document.getElementById('logout-form').submit();">
+                            {{ __('Logout') }}
+                        </a>
+
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                @csrf
+                        </form>
                     @else
                         <a href="{{ route('login') }}">Login</a>
 
@@ -80,18 +88,16 @@
             @endif
 
             <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
+                <h1 class="title m-b-md">
+                    Cross Link!
+                </h1>
 
                 <div class="links">
-                    <a href="https://laravel.com/docs">Docs</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://blog.laravel.com">Blog</a>
-                    <a href="https://nova.laravel.com">Nova</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
+                    <a href="/bookmarks">Bookmarks</a>
+                    <a href="/users">Users</a>
+                    @auth
+                    <a href="/users/{{ Auth::user()->id }}">My Account</a>
+                    @endauth
                 </div>
             </div>
         </div>
