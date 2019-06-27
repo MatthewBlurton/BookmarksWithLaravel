@@ -40,6 +40,11 @@ class User extends Authenticatable
 
     use HasRoles;
 
+    public function profile()
+    {
+        return $this->hasOne('App\Profile');
+    }
+
     public function bookmarks()
     {
         return $this->hasMany('App\Bookmark');

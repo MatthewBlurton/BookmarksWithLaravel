@@ -51,7 +51,7 @@ class BookmarksController extends Controller
         $attributes["user_id"] = auth()->id();
         $bookmark = Bookmark::create($attributes);
 
-        return redirect("/bookmarks/$bookmark->id");
+        return redirect("bookmarks.$bookmark->id");
     }
 
     // Allow user to view a new specific bookmark
@@ -83,7 +83,7 @@ class BookmarksController extends Controller
         $attributes["user_id"] = auth()->id();
         // Update the bookmark with the validated attributes, then redirect to show the specific bookmark
         $bookmark->update($attributes);
-        return redirect("/bookmarks/$bookmark->id");
+        return redirect("bookmarks.$bookmark->id");
     }
 
     // Delete the selected bookmark

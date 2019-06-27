@@ -28,23 +28,6 @@ class UsersController extends Controller
         );
     }
 
-    // Save a bookmark (will redirect to show that specific bookmark's details)
-    public function store(Request $request)
-    {
-        // // Validate the request inputs first
-        // $attributes = request()->validate([
-        //     'title' => ['required', 'min:3'],
-        //     'url' => ['required', 'url'],
-        //     'description' => ['min:3'],
-        // ]);
-
-        // // Create a new bookmark with the attributes and the currently logged in user id. Then redirect to show details of the newly created bookmark
-        // $attributes["user_id"] = auth()->id();
-        // $bookmark = Bookmark::create($attributes);
-
-        return redirect("users");
-    }
-
     // View a specific user
     public function show(User $user)
     {

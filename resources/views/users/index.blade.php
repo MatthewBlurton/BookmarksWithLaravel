@@ -9,22 +9,28 @@
 		</div>
 		<div class="row">
 			@foreach($users as $aUser)
+			@php($profile = $aUser->profile)
 			<div class="col-md-4">
 				<div class="card">
-				  <img class="card-img-top" src="..." alt="Card image cap">
+				  <img class="card-img-top" src="{{ $profile->avatar }}" alt="User avatar">
 				  <div class="card-body">
-				    <h5 class="card-title">{{ $aUser->name }}</h5>
-				    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+				    <a href="users/{{ $aUser->id }}"><h5 class="card-title">{{ $aUser->name }}</h5></a>
+				    <p class="card-text">{{ $profile->first_name }}, {{ $profile->last_name }}</p>
 				  </div>
 				  <ul class="list-group list-group-flush">
-				    <li class="list-group-item">Cras justo odio</li>
-				    <li class="list-group-item">Dapibus ac facilisis in</li>
-				    <li class="list-group-item">Vestibulum at eros</li>
+				  	<li class="list-group-item">
+				  		<h6 class="card-subtitle">Actions</h6>
+				  		<a href="users/{{ $aUser->id }}/edit" class="btn btn-primary">Modify</a>
+				  	</li>
 				  </ul>
 				  <div class="card-body">
-				    <a href="#" class="card-link">Card link</a>
-				    <a href="#" class="card-link">Another link</a>
+				    <a href="mailto://{{ $profile->email }}" class="card-link">{{ $profile->email }}</a>
 				  </div>
+				  @if($profile->social)
+					  <div class="card-footer">
+					  	<a href="{{ $profile->social }}">{{ $profile->social }}</a>
+					  </div>
+				  @endif
 				</div>
 			</div>
 			@endforeach

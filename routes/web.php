@@ -23,10 +23,10 @@ Route::resource('bookmarks', 'BookmarksController');
 
 // Route for users
 Route::match(['get', 'head'], 'users', 'UsersController@index')->name("users.index");
-Route::delete('users.{user}', 'UsersController@destroy')->name('users.destroy');
-Route::match(['put', 'patch'], 'users.{user}', 'UsersController@update')->name('users.update');
-Route::match(['get', 'head'], 'users.{user}', 'UsersController@show')->name('users.show');
-Route::match(['get', 'head'], 'users.{user}/edit', 'UsersController@edit')->name('users.edit');
+Route::delete('users/{user}', 'UsersController@destroy')->name('users.destroy');
+Route::match(['put', 'patch'], 'users/{user}', 'UsersController@update')->name('users.update');
+Route::match(['get', 'head'], 'users/{user}', 'UsersController@show')->name('users.show');
+Route::match(['get', 'head'], 'users/{user}/edit', 'UsersController@edit')->name('users.edit');
 
 /*
 PUT|PATCH update
