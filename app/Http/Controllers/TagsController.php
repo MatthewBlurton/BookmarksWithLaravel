@@ -14,6 +14,13 @@ class TagsController extends Controller
         
     }
 
+    public function index()
+    {
+        $tags = Tag::all();
+
+        return view('bookmarks.tags', $tags);
+    }
+
     public function update(Bookmark $bookmark)
     {
         $attributes = request()->validate([

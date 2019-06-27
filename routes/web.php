@@ -21,6 +21,20 @@ Auth::routes();
 
 Route::resource('bookmarks', 'BookmarksController');
 
+// Route for users
+Route::match(['get', 'head'], 'users', 'UsersController@index')->name("users.index");
+Route::delete('users.{user}', 'UsersController@destroy')->name('users.destroy');
+Route::match(['put', 'patch'], 'users.{user}', 'UsersController@update')->name('users.update');
+Route::match(['get', 'head'], 'users.{user}', 'UsersController@show')->name('users.show');
+Route::match(['get', 'head'], 'users.{user}/edit', 'UsersController@edit')->name('users.edit');
+
+/*
+PUT|PATCH update
+GET|HEAD show
+GET|HEAD edit
+*/
+
 // Route for assigning and removing tags
-Route::patch('tags/{bookmark}', 'TagsController@update')->name('tags.update');
+Route::match(['get', 'head'], 'tags', 'TagsController@index')->name('tags');
+Route::match(['put', 'patch'], 'tags/{bookmark}', 'TagsController@update')->name('tags.update');
 Route::delete('tags/{bookmark}/{tag}', 'TagsController@destroy')->name('tags.destroy');
