@@ -9,13 +9,21 @@
         <div class="col-sm-2">
             <a href="/bookmarks/create" class="btn btn-primary">Create</a>
         </div>
-        <div class="col-sm-8">
+        <div class="col-sm-6">
             <div class="form-group">
-              <input type="text" class="form-control" name="search" id="search" placeholder="Search...">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="search" id="search" placeholder="Search...">
+                    <div class="input-group-append">
+                        <a href="#" class="btn btn-secondary">Search</a>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="col-sm-2">
-
+        <div class="col-sm-4">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" name="show_owned" id="show_owned" class="custom-control-input">
+                <label class="custom-control-label" for="show_owned">Show owned bookmarks only</label>
+            </div>
         </div>
     </div>
 
