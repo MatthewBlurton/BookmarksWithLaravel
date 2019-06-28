@@ -20,7 +20,7 @@ class UsersController extends Controller
     function index()
     {
         // Only grab bookmarks when it is either associated with the current logged in user, or if the bookmark is public
-        $users = User::all();
+        $users = User::paginate(8);
 
         return view (
             'users.index',

@@ -2,11 +2,10 @@
 
 @section('content')
 <div class="container">
-
     <div class="row">
         <div class="col">
             @component('components.errors')
-                <strong>Whoops!</strong> Could not create a new bookmark for the following reasons.
+            <strong>Whoops!</strong> Could not create a new bookmark for the following reasons.
             @endcomponent
         </div>
     </div>
@@ -32,6 +31,13 @@
                 <textarea name="description" id="bookmark-description" class="form-control"
                     aria-describedBy="descriptionHelp"
                     placeholder="Enter Description">{{ old('description') }}</textarea>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="custom-control custom-switch">
+                <input type="checkbox" name="is_public" id="is_public" class="custom-control-input"
+                    @if(old('is_public'))checked @endif>
+                <label class="custom-control-label" for="is_public">Is Public</label>
             </div>
         </div>
         <button type="submit" class="btn btn-primary">Done</button>

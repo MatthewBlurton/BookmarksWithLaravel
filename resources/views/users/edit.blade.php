@@ -5,6 +5,9 @@
     <form type="POST" action="{{ route('users.update', $user) }}">
         @method('PATCH')
         @csrf
+
+        {{-- User settings section --}}
+        @can('edit users')
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card mb-4">
@@ -68,6 +71,11 @@
                 </div>
             </div>
         </div>
+        @endcan
+        {{-- End user settings section --}}
+
+        {{-- Profile settings section --}}
+        @can('edit profiles')
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
@@ -145,6 +153,8 @@
                 </div>
             </div>
         </div>
+        @endcan
+        {{-- End profile section --}}
     </form>
 </div>
 @endsection

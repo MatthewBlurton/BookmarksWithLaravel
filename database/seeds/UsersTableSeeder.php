@@ -18,7 +18,8 @@ class UsersTableSeeder extends Seeder
         $adminUser = User::create([
         	'name'		=> 'Admin',
         	'email'		=> 'admin@crosslink.com',
-        	'password'	=> bcrypt('secret'),
+            'password'	=> bcrypt('secret'),
+            'email_verified_at' => now(),
         ]);
 
         // Assign the admin role to Admin

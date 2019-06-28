@@ -19,7 +19,8 @@ class BookmarkPolicy
      */
     public function view(User $user, Bookmark $bookmark)
     {
-        return $this->checkAuthorized($user, $bookmark) || $bookmark->is_public;
+        $userIsAuthorized = isset($user) && $this->checkAuthorized($user, $bookmark);
+        return $userIsAuthorized || $bookmark->is_public;
     }
 
     /**

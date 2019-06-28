@@ -12,9 +12,12 @@
 			@php($profile = $aUser->profile)
 			<div class="col-sm-6 col-md-4 col-lg-3">
 				<div class="card mb-4">
-				  {{-- @if($profile->avatar)
+				  @if(isset($profile->avatar))
 				  <img class="card-img-top" src="{{ $profile->avatar }}" alt="User avatar">
-				  @endif --}}
+				  @else
+				  <img src="https://via.placeholder.com/150x150" alt="User avatar placeholder" class="card-img-top" >
+				  @endif
+
 				  <div class="card-body">
 				    <a href="users/{{ $aUser->id }}"><h5 class="card-title">{{ $aUser->name }}</h5></a>
 				    <p class="card-text">{{ $profile->first_name }}, {{ $profile->last_name }}</p>
@@ -39,5 +42,11 @@
 			</div>
 			@endforeach
 		</div>
+
+		@if($users instanceof \Illuminate\Pagination\LengthAwarePaginator)
+        <div class="row">
+            <div class="col text-center">{{ $users->links() }}</div>
+        </div>
+		@endif
 	</div>
 @endsection

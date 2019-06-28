@@ -18,22 +18,29 @@
                 @csrf
 
                 <div class="form-group">
-                    <label for="bookmark-title">Title</label>
-                    <input type="text" name="title" id="bookmark-title" class="form-control"
+                    <label for="title">Title</label>
+                    <input type="text" name="title" id="title" class="form-control"
                         value="{{ old('title') ? old('title') : $bookmark->title }}" aria-describedBy="titleHelp"
                         placeholder="Enter bookmark title">
                 </div>
                 <div class="form-group">
-                    <label for="bookmark-url">URL</label>
-                    <input type="text" name="url" id="bookmark-url" class="form-control"
+                    <label for="url">URL</label>
+                    <input type="text" name="url" id="url" class="form-control"
                         value="{{ old('url') ? old('url') : $bookmark->url }}" aria-describedBy="bookmarkURL"
                         placeholder="Enter URL">
                 </div>
                 <div class="form-group">
-                    <label for="bookmark-description">Description</label>
-                    <textarea name="description" id="bookmark-description" class="form-control"
+                    <label for="description">Description</label>
+                    <textarea name="description" id="description" class="form-control"
                         aria-describedBy="descriptionHelp"
                         placeholder="Enter Description">{{ old('description') ? old('description') : $bookmark->description }}</textarea>
+                </div>
+                <div class="form-group">
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" name="is_public" id="is_public" class="custom-control-input"
+                        @if(old('is_public'))checked @elseif($bookmark->is_public)checked @endif>
+                        <label class="custom-control-label" for="is_public">Is Public</label>
+                    </div>
                 </div>
             </form>
         </div>

@@ -13,6 +13,14 @@
             <a href="{{ $bookmark->url }}">{{ $bookmark->url }}</a>
             <h2>Description</h2>
             <p>{{ $bookmark->description }}</p>
+            <h2>Owner</h2>
+            <a href="{{ route('users.show', $bookmark->user->id) }}">{{ $bookmark->user->name }}</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h2>Visibility</h2>
+            <p>@if($bookmark->is_public) Public @else Private @endif</p>
         </div>
     </div>
     <div class="row">
@@ -24,7 +32,7 @@
                         @csrf
                         
                         <h2>Tags</h2>
-                        <div class="input-group">
+                        <div class="input-group mb-3">
                             <input type="text" id="bookmark-tags" class="form-control" placeholder="Enter tag to add"
                                 list="tag-list" name="name">
                             <div class="input-group-append">
