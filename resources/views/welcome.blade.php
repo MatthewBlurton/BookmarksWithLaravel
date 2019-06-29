@@ -95,6 +95,7 @@
                 <div class="links">
                     <a href="/bookmarks">Bookmarks</a>
                     <a href="/users">Users</a>
+                    <a href="/tags">Tags</a>
                     @auth
                     <a href="/users/{{ Auth::user()->id }}">My Account</a>
                     @endauth

@@ -2,6 +2,16 @@
 
 @section('content')
 <div class="container">
+	@can('edit users')
+		@if(auth()->user()->id === $user->id
+			|| $user->hasPermissionTo('access all users'))
+		<div class="row mb-3">
+			<div class="col-auto">
+				<a href="{{ route('users.edit', $user) }}" class="btn btn-primary">Edit User</a>
+			</div>
+		</div>
+		@endif
+	@endcan
 	@if(!$user->hasVerifiedEmail())
 	<div class="row">
 		<div class="col">

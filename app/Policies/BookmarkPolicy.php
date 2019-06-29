@@ -23,16 +23,27 @@ class BookmarkPolicy
         return $userIsAuthorized || $bookmark->is_public;
     }
 
+     /**
+     * Determine whether the user can create bookmarks.
+     *
+     * @param  \App\User  $user
+     * @return bool
+     */
+    public function create(User $user)
+    {
+        return $user->hasVerifiedEmail();
+    }
+
     /**
      * Determine whether the user can update the bookmark.
      *
      * @param  \App\User  $user
      * @param  \App\Bookmark  $bookmark
-     * @return mixed
+     * @return bool
      */
     public function update(User $user, Bookmark $bookmark)
     {
-        return $this->checkAuthorized($user, $bookmark);
+        return $user->hasVerifiedEmail() && $this->checkAuthorized($user, $bookmark);
     }
 
     /**
@@ -40,7 +51,7 @@ class BookmarkPolicy
      *
      * @param  \App\User  $user
      * @param  \App\Bookmark  $bookmark
-     * @return mixed
+     * @return bool
      */
     public function delete(User $user, Bookmark $bookmark)
     {
@@ -52,7 +63,7 @@ class BookmarkPolicy
      *
      * @param  \App\User  $user
      * @param  \App\Bookmark  $bookmark
-     * @return mixed
+     * @return bool
      */
     private function checkAuthorized(User $user, Bookmark $bookmark)
     {

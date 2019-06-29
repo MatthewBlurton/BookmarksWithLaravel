@@ -11,6 +11,7 @@ class UsersController extends Controller
     public function __construct()
     {
         // Authorization middleware (if the user does not have appropriate permissions, do a not currently logged in error)
+        $this->middleware('auth')->except(['index', 'show']);
         $this->middleware(['permission:edit users', 'verified'])->only(['edit', 'update']);
         $this->middleware(['permission:add users'])->only(['create', 'store']);
         $this->middleware(['permission:delete users'])->only('destroy');
@@ -19,8 +20,12 @@ class UsersController extends Controller
     // Show all bookmarks
     function index()
     {
-        // Only grab bookmarks when it is either associated with the current logged in user, or if the bookmark is public
-        $users = User::paginate(8);
+        // Show all users if logged in and verified
+        if (auth()->check() && auth()->user()->hasVerifiedEmail()) {
+            $users = User::orderBy('updated_at', 'DESC')->paginate(8);
+        } else { // Otherwise only show 8 users
+            $users = User::orderBy('updated_at', 'DESC')->take(8)->get();
+        }
 
         return view (
             'users.index',

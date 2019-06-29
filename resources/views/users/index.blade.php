@@ -44,8 +44,8 @@
 		</div>
 
 		@if($users instanceof \Illuminate\Pagination\LengthAwarePaginator)
-        <div class="row">
-            <div class="col text-center">{{ $users->links() }}</div>
+        <div class="row justify-content-center">
+            <div class="col-auto">{{ $users->links() }}</div>
         </div>
 		@endif
 	</div>

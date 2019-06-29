@@ -29,6 +29,7 @@ Route::match(['get', 'head'], 'users/{user}', 'UsersController@show')->name('use
 Route::match(['get', 'head'], 'users/{user}/edit', 'UsersController@edit')->name('users.edit');
 
 // Route for assigning and removing tags
-Route::match(['get', 'head'], 'tags', 'TagsController@index')->name('tags');
+Route::match(['get', 'head'], 'tags', 'TagsController@index')->name('tags.index');
+Route::match(['get', 'head'], 'tags/{tag}', 'TagsController@show')->name('tags.show');
 Route::match(['put', 'patch'], 'tags/{bookmark}', 'TagsController@update')->name('tags.update');
 Route::delete('tags/{bookmark}/{tag}', 'TagsController@destroy')->name('tags.destroy');

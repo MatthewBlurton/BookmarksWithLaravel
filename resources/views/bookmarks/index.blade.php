@@ -3,7 +3,13 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <h1>Bookmarks</h1>
+        <h1>
+        @guest
+        10 most recent
+        @elseif(!auth()->user()->hasVerifiedEmail())
+        10 most recent
+        @endguest
+         Bookmarks</h1>
     </div>
     <div class="row mb-2">
         <div class="col-sm-2">
@@ -27,7 +33,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row mb-3">
         <table class="table-striped col">
             <thead class="thead-dark">
                 <tr>
@@ -58,8 +64,8 @@
     </div>
 
     @if($bookmarks instanceof \Illuminate\Pagination\LengthAwarePaginator)
-    <div class="row">
-        <div class="col text-center">{{ $bookmarks->links() }}</div>
+    <div class="row justify-content-center">
+        <div class="col-auto">{{ $bookmarks->links() }}</div>
     </div>
     @endif
 

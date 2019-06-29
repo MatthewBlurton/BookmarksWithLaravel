@@ -7,7 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Profile::class, function (Faker $faker) {
     return [
-        'avatar'		=> '/tmp',
+        'avatar'		=> null,
         'first_name'	=> $faker->name,
         'family_name'	=> $faker->name,
         'social'		=> $faker->url,
