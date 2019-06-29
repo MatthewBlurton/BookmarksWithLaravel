@@ -36,14 +36,41 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can delete the model.
-     *
-     * @param  \App\User  $user
-     * @param  \App\User  $model
-     * @return mixed
+     * Determine whether the currently logged in user can assign the target user a new role
+     * @param \App\User $user
+     * @param \App\User $targer
+     * @return bool
      */
-    public function delete(User $user, User $model)
+    public function assignRole(User $user, User $target)
     {
-        return $user->hasAllPermissions('delete users', 'access all users');
+        // Check if target has lower privelages than the current user
+        if ($user->hasAllPermissions('assign roles', 'access ordinary users'))
+        {
+            return !$target->hasAllPermissions('assign roles', 'access all users')
+                || !$target->hasAllPermissions('assign role', 'access all users');
+        }
+        return $user->hasAllPermissions('assign roles', 'access all users')
+            || !$target->hasAllPermissions('assign role', 'access all users');
+    }
+
+    /**
+     * Determine whether the user can suspend another user.
+     * Checks if the user has the 'delete user' and 'access all users' position,
+     * and ensures that the user doesn't have the same id of the target to prevent suspending the
+     * logged in users account.
+     * @param  \App\User  $user
+     * @param  \App\User  $target
+     * @return bool
+     */
+    public function suspend(User $user, User $target)
+    {
+        // Check if target has lower privelages than the current user
+        if ($user->hasAllPermissions('suspend user', 'access ordinary users'))
+        {
+            return !$target->hasAllPermissions('suspend user', 'access all users')
+                || !$target->hasAllPermissions('suspend user', 'access all users');
+        }
+        return $user->hasAllPermissions('suspend user', 'access all users')
+            || !$target->hasAllPermissions('suspend user', 'access all users');
     }
 }

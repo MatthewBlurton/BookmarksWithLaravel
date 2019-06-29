@@ -22,11 +22,13 @@
 				    <a href="users/{{ $aUser->id }}"><h5 class="card-title">{{ $aUser->name }}</h5></a>
 				    <p class="card-text">{{ $profile->first_name }}, {{ $profile->last_name }}</p>
 				  </div>
+				  <hr>
 				  <div class="card-body">
 				    <a href="mailto://{{ $aUser->email }}" class="card-link">{{ $aUser->email }}</a>
 				  </div>
 
 				  @if($profile->social)
+				  <hr>
 				  <div class="card-body">
 				    <a href="{{ $profile->social }}">{{ $profile->social }}</a>
 				  </div>

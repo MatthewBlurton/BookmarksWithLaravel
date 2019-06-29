@@ -49,10 +49,8 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'search profiles']);
 
         // Role assignment privelages
-        Permission::create(['name' => 'suspend user']);
-        Permission::create(['name' => 'assign role user']);
-        Permission::create(['name' => 'assign role user admin']);
-        Permission::create(['name' => 'assign role admin']);
+        Permission::create(['name' => 'suspend users']);
+        Permission::create(['name' => 'assign role']);
 
         // Admin level privelages
         Permission::create(['name' => 'access all ordinary users']);
@@ -103,6 +101,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 'access all ordinary users',
                 'access all profiles',
                 'suspend user',
+                'assign role',
                 'assign role user',
                 'assign role user admin',
             ]);
@@ -117,9 +116,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 'access all bookmarks',
                 'access all profiles',
                 'suspend user',
-                'assign role user',
-                'assign role user admin',
-                'assign role admin',
+                'assign role',
             ]);
     }
 }

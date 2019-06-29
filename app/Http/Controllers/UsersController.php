@@ -49,8 +49,41 @@ class UsersController extends Controller
     // Performs an update to the selected user
     public function update(User $user)
     {
-        $this->authorize('update', $user);
-        return redirect("users.$user->id");
+        // $this->authorize('update', User::class);
+    //     return Validator::make($data, [
+    //         'name' => ['required', 'string', 'max:255'],
+    //         'first_name' => ['required', 'string', 'max:128'],
+    //         'family_name' => ['required', 'string', 'max:128'],
+    //         'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+    //         'password' => ['required', 'string', 'min:8', 'confirmed'],
+    //     ]);
+    // }
+
+        $userAttributes = request()->validate([
+            'old-password' => 'min|8|confirmed',
+            'password' => 'required_with:old-password|string|min:8|confirmed',
+        ]);
+
+        $profileAttributes = request()->validate([
+            'first_name' => ['required', 'string', 'max:128'],
+            'family_name' => ['required', 'string', 'max:128'],
+            'avatar' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'social' => 'url'
+        ]);
+
+        $avatarName = is_null(request()->avatar) ? null
+            : $user->id.'_avatar'.time().'.'.request()->avatar->getClientOriginalExtension();
+
+        if (!is_null($avatarName)) {
+            request()->avatar->storeAs('avatars', $avatarName);
+
+            $user->profile->avatar = '/storage/avatars/' . $avatarName;
+        } else {
+            $user->profile->avater = null;
+        }
+        $user->profile->save();
+
+        return back()->with('success', 'Your account has been successfully updated.');
     }
 
     // Suspend the selected user

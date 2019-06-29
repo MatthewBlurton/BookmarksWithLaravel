@@ -2,9 +2,17 @@
 
 @section('content')
 <div class="container">
-    <form type="POST" action="{{ route('users.update', $user) }}">
+    <form method="POST" action="{{ route('users.update', $user) }}" enctype="multipart/form-data">
         @method('PATCH')
         @csrf
+
+        <div class="row">
+            <div class="col">
+                @component('components.errors')
+                <strong>Whoops!</strong> Could not update your account for the following reasons.
+                @endcomponent
+            </div>
+        </div>
 
         {{-- User settings section --}}
         @can('edit users')
@@ -21,15 +29,6 @@
                                 <input id="email" type="email" class="form-control" value="{{ $user->email }}" disabled>
                             </div>
                         </div>
-
-                        {{-- <div class="form-group row">
-                                <div class="input-group col-md-8 mx-auto">
-                                    <div class="custom-file">
-                                        <input type="file" name="avatar file" id="avatar" class="custom-file-input">
-                                        <label for="avatar" class="custom-file-label">Avatar</label>
-                                    </div>
-                                </div>
-                            </div> --}}
 
                         @if(auth()->user()->id === $user->id)
                         {{-- Old Password input --}}
@@ -60,18 +59,18 @@
 
                         {{-- Password confirm input --}}
                         <div class="form-group row">
-                            <label for="password_confirm"
+                            <label for="password_confirmation"
                                 class="col-md-4 col-form-label text-md-right">{{ __('Confirm New Password') }}</label>
 
                             <div class="col-md-6">
-                                <input id="password_confirm" type="password" class="form-control"
-                                    name="password_confirm" required autocomplete="new-password">
+                                <input id="password_confirmation" type="password" class="form-control"
+                                    name="password_confirmation" required autocomplete="new-password">
                             </div>
                         </div>
                         @elseif(auth()->user()->hasPermissionTo('access all users'))
                         <div class="form-group row">
                             <div class="col-md-10">
-                            <a href="" class="btn btn-primary">Reset Password</a>
+                                <a href="" class="btn btn-primary">Reset Password</a>
                             </div>
                         </div>
                         @endif
@@ -96,8 +95,8 @@
                             <div class="col-md-6">
                                 <input type="text" name="first_name" id="first_name"
                                     class="form-control @error('first_name')is-invalid @enderror"
-                                    value="{{ old('first_name') ? old('first_name') : $user->profile->first_name }}" required
-                                    autocomplete="name">
+                                    value="{{ old('first_name') ? old('first_name') : $user->profile->first_name }}"
+                                    required autocomplete="name">
 
                                 @error('first_name')
                                 <span class="invalid-feedback" role="alert">
@@ -114,8 +113,8 @@
                             <div class="col-md-6">
                                 <input type="text" name="family_name" id="family_name"
                                     class="form-control @error('family_name')is-invalid @enderror"
-                                    value="{{ old('family_name') ? old('family_name') : $user->profile->family_name }}" required
-                                    autocomplete="name">
+                                    value="{{ old('family_name') ? old('family_name') : $user->profile->family_name }}"
+                                    required autocomplete="name">
 
                                 @error('family_name')
                                 <span class="invalid-feedback" role="alert">
@@ -129,8 +128,12 @@
                         <div class="form-group row">
                             <div class="input-group col-md-8 mx-auto">
                                 <div class="custom-file">
-                                    <input type="file" name="avatar file" id="avatar" class="custom-file-input">
-                                    <label for="avatar" class="custom-file-label">Avatar</label>
+                                    {{-- <input type="file" name="avatar" id="avatar" class="custom-file-input">
+                                    <label for="avatar" class="custom-file-label">Avatar</label> --}}
+                                    <input type="file" class="form-control-file" name="avatar" id="avatarFile"
+                                        aria-describedby="fileHelp">
+                                    <small id="fileHelp" class="form-text text-muted">Please upload a valid image file.
+                                        Size of image should not be more than 2MB.</small>
                                 </div>
                             </div>
                         </div>
@@ -142,7 +145,8 @@
                             <div class="col-md-6">
                                 <input type="text" name="social" id="social"
                                     class="form-control @error('social')is-invalid @enderror"
-                                    value="{{ old('social') ? old('social') : $user->profile->social }}" autocomplete="url">
+                                    value="{{ old('social') ? old('social') : $user->profile->social }}"
+                                    autocomplete="url">
 
                                 @error('social')
                                 <span class="invalid-feedback" role="alert">
