@@ -88,6 +88,11 @@
             @endif
 
             <div class="content">
+                @auth
+                @if(!auth()->user()->hasVerifiedEmail())
+                @include('partials.notverified')
+                @endif
+                @endauth
                 <h1 class="title m-b-md">
                     Cross Link!
                 </h1>
