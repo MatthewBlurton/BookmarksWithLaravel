@@ -13,14 +13,14 @@ class UsersDummyTableSeeder extends Seeder
     {
         // Create the verified user
         $user = App\User::create([
-        	'name'		=> 'Verified',
-        	'email'		=> 'verified@crosslink.com',
-            'password'	=> bcrypt('secret'),
+        	'name'		=> 'AdminUser',
+        	'email'		=> 'admin-user@crosslink.com',
+            'password'	=> bcrypt('password'),
             'email_verified_at' => now(),
         ]);
 
         // Assign the user role to Admin
-        $user->assignRole('user');
+        $user->assignRole('admin user');
 
         // Create and assign a profile to the verified user
         $profile = factory('App\Profile')->make()->getAttributes();
@@ -30,7 +30,7 @@ class UsersDummyTableSeeder extends Seeder
         $user = App\User::create([
             'name'		=> 'User',
             'email'		=> 'user@crosslink.com',
-            'password'	=> bcrypt('secret'),
+            'password'	=> bcrypt('password'),
         ]);
         
         // Assign the admin role to user

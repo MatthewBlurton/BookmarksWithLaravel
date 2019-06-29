@@ -168,7 +168,31 @@
         @endcan
         {{-- End profile section --}}
 
-        {{-- Role section --}}
+        {{-- Admin section --}}
+        @auth
+        @if(auth()->user()->can('assignRole', $user) || auth()->user()->can('suspend', $user))
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">Admin Options</div>
+                        <div class="card-body">
+                            @can('assignRole', $user)
+                                <p>Assign role for user!</p>
+                            @endcan
+
+                            @can('suspend', $user)
+                            <div class="form-group-row">
+                                <div class="col-md-6 offset-md-4">
+                                    <button type="submit" class="btn btn-danger">Suspend user</button>
+                                </div>
+                            </div>
+                            @endcan
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+        @endauth
     </form>
 </div>
 @endsection

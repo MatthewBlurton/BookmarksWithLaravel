@@ -49,7 +49,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'search profiles']);
 
         // Role assignment privelages
-        Permission::create(['name' => 'suspend users']);
+        Permission::create(['name' => 'suspend user']);
         Permission::create(['name' => 'assign role']);
 
         // Admin level privelages
@@ -102,8 +102,6 @@ class RolesAndPermissionsSeeder extends Seeder
                 'access all profiles',
                 'suspend user',
                 'assign role',
-                'assign role user',
-                'assign role user admin',
             ]);
         Role::create(['name' => 'admin'])
             ->givePermissionTo($usersEdBundle)

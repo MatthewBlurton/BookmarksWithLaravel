@@ -18,7 +18,7 @@ class UsersTableSeeder extends Seeder
         $adminUser = User::create([
         	'name'		=> 'Admin',
         	'email'		=> 'admin@crosslink.com',
-            'password'	=> bcrypt('secret'),
+            'password'	=> bcrypt('password'),
             'email_verified_at' => now(),
         ]);
 

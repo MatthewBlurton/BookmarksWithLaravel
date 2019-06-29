@@ -44,13 +44,13 @@ class UserPolicy
     public function assignRole(User $user, User $target)
     {
         // Check if target has lower privelages than the current user
-        if ($user->hasAllPermissions('assign roles', 'access ordinary users'))
+        if ($user->hasAllPermissions('assign role', 'access all ordinary users'))
         {
-            return !$target->hasAllPermissions('assign roles', 'access all users')
+            return !$target->hasAllPermissions('assign role', 'access all ordinary users')
                 || !$target->hasAllPermissions('assign role', 'access all users');
         }
-        return $user->hasAllPermissions('assign roles', 'access all users')
-            || !$target->hasAllPermissions('assign role', 'access all users');
+        return $user->hasAllPermissions('assign role', 'access all users')
+            && !$target->hasAllPermissions('assign role', 'access all users');
     }
 
     /**
@@ -65,12 +65,12 @@ class UserPolicy
     public function suspend(User $user, User $target)
     {
         // Check if target has lower privelages than the current user
-        if ($user->hasAllPermissions('suspend user', 'access ordinary users'))
+        if ($user->hasAllPermissions('suspend user', 'access all ordinary users'))
         {
-            return !$target->hasAllPermissions('suspend user', 'access all users')
+            return !$target->hasAllPermissions('suspend user', 'access all ordinary users')
                 || !$target->hasAllPermissions('suspend user', 'access all users');
         }
         return $user->hasAllPermissions('suspend user', 'access all users')
-            || !$target->hasAllPermissions('suspend user', 'access all users');
+            && !$target->hasAllPermissions('suspend user', 'access all users');
     }
 }
