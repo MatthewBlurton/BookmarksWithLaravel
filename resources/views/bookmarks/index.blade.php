@@ -4,32 +4,15 @@
 <div class="container">
     <div class="row justify-content-center">
         <h1>
-        @guest
-        10 most recent
-        @elseif(!auth()->user()->hasVerifiedEmail())
-        10 most recent
-        @endguest
-         Bookmarks</h1>
+        @cannot('create', App\Bookmark::class)
+        10 most recent 
+        @endcannot
+        Bookmarks
+        </h1>
     </div>
-    <div class="row mb-2">
-        <div class="col-sm-2">
-            <a href="/bookmarks/create" class="btn btn-primary">Create</a>
-        </div>
-        <div class="col-sm-6">
-            <div class="form-group">
-                <div class="input-group">
-                    <input type="text" class="form-control" name="search" id="search" placeholder="Search...">
-                    <div class="input-group-append">
-                        <a href="#" class="btn btn-secondary">Search</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-4">
-            <div class="custom-control custom-switch">
-                <input type="checkbox" name="show_owned" id="show_owned" class="custom-control-input">
-                <label class="custom-control-label" for="show_owned">Show owned bookmarks only</label>
-            </div>
+    <div class="row justify-content-center mb-2">
+        <div class="col-8">
+            @can('create', App\Bookmark::class)<a href="/bookmarks/create" class="btn btn-primary btn-block">Create</a>@endcan
         </div>
     </div>
 
@@ -53,9 +36,9 @@
                     </td>
                     <td scope="col">
                         <a href="{{ route('bookmarks.show', $aBookmark->id) }}" class="btn btn-primary">Details</a>
-                        @auth @if(auth()->user()->id === $aBookmark->user->id
-                                    || auth()->user()->hasPermissionTo('access all bookmarks'))
-                                    <a href="{{ route('bookmarks.edit', $aBookmark->id) }}" class="btn btn-secondary">Edit</a> @endif @endauth
+                        @can('update', $aBookmark)
+                        <a href="{{ route('bookmarks.edit', $aBookmark->id) }}" class="btn btn-secondary">Edit</a>
+                        @endcan
                     </td>
                 </tr>
                 @endforeach

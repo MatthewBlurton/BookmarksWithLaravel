@@ -16,10 +16,10 @@ class UserPolicy
      * @param  \App\User  $model
      * @return mixed
      */
-    public function update(User $user, User $model)
+    public function update(User $user, User $target)
     {
-        return $user->id === $model->id
-            || $user->hasPermissionTo('access all users');
+        return $user->id === $target->id
+            || $this->checkPermissions($user, $target, 'edit users');
     }
 
     /**
@@ -32,7 +32,7 @@ class UserPolicy
     public function updateProfile(User $user, Profile $profile)
     {
         return $user->id === $profile->user_id
-            || $user->hasPermissionTo('access all users');
+            || $this->checkPermissions($user, $profile->user->id, 'edit users');
     }
 
     /**
@@ -43,14 +43,7 @@ class UserPolicy
      */
     public function assignRole(User $user, User $target)
     {
-        // Check if target has lower privelages than the current user
-        if ($user->hasAllPermissions('assign role', 'access all ordinary users'))
-        {
-            return !$target->hasAllPermissions('assign role', 'access all ordinary users')
-                || !$target->hasAllPermissions('assign role', 'access all users');
-        }
-        return $user->hasAllPermissions('assign role', 'access all users')
-            && !$target->hasAllPermissions('assign role', 'access all users');
+        return $this->checkPermissions($user, $target, 'assign role');
     }
 
     /**
@@ -64,13 +57,24 @@ class UserPolicy
      */
     public function suspend(User $user, User $target)
     {
-        // Check if target has lower privelages than the current user
-        if ($user->hasAllPermissions('suspend user', 'access all ordinary users'))
+        return $this->checkPermissions($user, $target, 'suspend user');
+    }
+
+    /**
+     * Check that the user has the necessary permissions and that those permissions don't conflict with the target user
+     */
+    private function checkPermissions(User $user, User $target, string $action)
+    {
+        // Ensure user admins can't change other user admins, and admins
+        if ($user->hasAllPermissions($action, 'access all ordinary users'))
         {
-            return !$target->hasAllPermissions('suspend user', 'access all ordinary users')
-                || !$target->hasAllPermissions('suspend user', 'access all users');
+            return !$target->hasAnyPermission('access all ordinary users', 'access all users');
+        }// Ensure admins can't change other admins
+        else if (! $user->hasAllPermissions($action, 'access admins'))
+        {
+            return !$target->hasPermissionTo('access all users');
         }
-        return $user->hasAllPermissions('suspend user', 'access all users')
-            && !$target->hasAllPermissions('suspend user', 'access all users');
+        // return true if the user has permission to access all admins
+        return $user->hasAllPermissions($action, 'access admins');
     }
 }

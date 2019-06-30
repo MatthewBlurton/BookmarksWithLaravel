@@ -12,15 +12,14 @@ class BookmarkPolicy
 
     /**
      * Determine whether the user can view the bookmark.
-     *
+     * They can view the bookmark if the user ha
      * @param  \App\User  $user
      * @param  \App\Bookmark  $bookmark
      * @return mixed
      */
     public function view(User $user, Bookmark $bookmark)
     {
-        $userIsAuthorized = isset($user) && $this->checkAuthorized($user, $bookmark);
-        return $userIsAuthorized || $bookmark->is_public;
+        return $user->hasPermissionTo('access all bookmarks') || $user->id === $bookmark->user_id || $bookmark->is_public;
     }
 
      /**
@@ -31,7 +30,7 @@ class BookmarkPolicy
      */
     public function create(User $user)
     {
-        return $user->hasVerifiedEmail();
+        return $user->hasVerifiedEmail() && $user->hasPermissionTo('add bookmarks');
     }
 
     /**
@@ -43,7 +42,7 @@ class BookmarkPolicy
      */
     public function update(User $user, Bookmark $bookmark)
     {
-        return $user->hasVerifiedEmail() && $this->checkAuthorized($user, $bookmark);
+        return $user->hasVerifiedEmail() && $this->checkPermissions($user, $bookmark, 'edit bookmarks');
     }
 
     /**
@@ -55,7 +54,7 @@ class BookmarkPolicy
      */
     public function delete(User $user, Bookmark $bookmark)
     {
-        return $this->checkAuthorized($user, $bookmark);
+        return $this->checkPermissions($user, $bookmark, 'delete bookmarks');
     }
 
     /**
@@ -65,9 +64,10 @@ class BookmarkPolicy
      * @param  \App\Bookmark  $bookmark
      * @return bool
      */
-    private function checkAuthorized(User $user, Bookmark $bookmark)
+    private function checkPermissions(User $user, Bookmark $bookmark, string $action)
     {
-        return $user->hasPermissionTo('access all bookmarks')
-            || $bookmark->user_id === $user->id;
+        return $user->hasAllPermissions($action, 'access all bookmarks')
+            || ($user->hasPermissionTo($action)
+                && $user->id === $bookmark->user_id );
     }
 }

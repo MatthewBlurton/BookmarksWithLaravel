@@ -35,7 +35,7 @@
 				  @endif
 
 				  {{-- if the user has permission to access all users or write to users display an option to modify the user --}}
-				  @can('access all users')
+				  @can('update', $aUser)
 				  	<div class="card-footer">
 						  <a href="users/{{ $aUser->id }}/edit" class="btn btn-primary">Modify</a>
 					</div>

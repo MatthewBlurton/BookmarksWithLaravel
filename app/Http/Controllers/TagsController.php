@@ -29,7 +29,7 @@ class TagsController extends Controller
 
     public function show(Tag $tag)
     {
-        // If the user is logged in and the email is verified, show all the tags
+        // If the user is logged in and the email is verified, and the bookmark is public, show each bookmark associated with this tag
         if (auth()->check() && auth()->user()->hasVerifiedEmail()) {
             $bookmarks = auth()->user()->hasPermissionTo('access all bookmarks')
                 ? $tag->bookmarks()->orderBy('updated_at', 'DESC')->paginate(7)
@@ -45,16 +45,18 @@ class TagsController extends Controller
 
     public function update(Bookmark $bookmark)
     {
+        $this->authorize('update', $bookmark);
         $attributes = request()->validate([
             'name' => ['min:3'],
         ]);
         $bookmark->attachTag($attributes['name']);
-        return redirect("/bookmarks/$bookmark->id");
+        return back();
     }
 
     public function destroy(Bookmark $bookmark, Tag $tag)
     {
+        $this->authorize('update', $bookmark);
         $bookmark->detachTag($tag);
-        return redirect("/bookmarks/$bookmark->id");
+        return back();
     }
 }

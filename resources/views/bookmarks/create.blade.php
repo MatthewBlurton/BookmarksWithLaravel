@@ -36,7 +36,7 @@
         <div class="form-group row">
             <div class="custom-control custom-switch">
                 <input type="checkbox" name="is_public" id="is_public" class="custom-control-input"
-                    @if(old('is_public'))checked @endif>
+                    @if(old('is_public'))checked @else checked @endif>
                 <label class="custom-control-label" for="is_public">Is Public</label>
             </div>
         </div>

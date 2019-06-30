@@ -25,13 +25,15 @@
     </div>
     <div class="row">
         <div class="col">
-            <div class="container-fluid p-0 m-0">
+            <div class="container-fluid">
+                <div class="row">
+                    <h2>Tags</h2>
+                </div>
+                @can('update', $bookmark)
                 <div class="row">
                     <form method="POST" action="/tags/{{ $bookmark->id }}" class="col-sm-6">
                         @method("PATCH")
                         @csrf
-                        
-                        <h2>Tags</h2>
                         <div class="input-group mb-3">
                             <input type="text" id="bookmark-tags" class="form-control" placeholder="Enter tag to add"
                                 list="tag-list" name="name">
@@ -52,13 +54,24 @@
                                 @method("DELETE")
                                 @csrf
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <span class="badge badge-secondary"><strong>{{ $aTag->name }}</strong></span>
+                                <p class="h4"><a href="{{ route('tags.show', $aTag) }}" class="badge badge-secondary"><strong>{{ $aTag->name }}</strong></a></p>
                                     <button type="submit" class="btn btn-danger">X</button>
                                 </li>
                             </form>
                             @endforeach
                         </ul>
                     </div>
+                    @else
+                    <div class="row">
+                        <div class="col">
+                            <ul class="list-group">
+                                @foreach ($bookmark->tags as $aTag)
+                                <li class="list-group-item"><a href="{{ route('tags.show', $aTag) }}" class="badge badge-secondary"><strong>{{ $aTag->name }}</strong></a></li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                    @endcan
                 </div>
             </div>
         </div>

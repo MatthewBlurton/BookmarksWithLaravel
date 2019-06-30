@@ -68,6 +68,8 @@ class BookmarksController extends Controller
         $attributes["user_id"] = auth()->id();
         $bookmark = Bookmark::create($attributes);
 
+        // Apply is_public boolean to the newly created bookmark and save it
+        $bookmark->is_public = $request->has('is_public');
         return redirect(route('bookmarks.show', $bookmark));
     }
 

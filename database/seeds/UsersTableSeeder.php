@@ -16,14 +16,14 @@ class UsersTableSeeder extends Seeder
     {
         // Create the administrator
         $adminUser = User::create([
-        	'name'		=> 'Admin',
-        	'email'		=> 'admin@crosslink.com',
+        	'name'		=> 'Root',
+        	'email'		=> 'root@crosslink.com',
             'password'	=> bcrypt('password'),
             'email_verified_at' => now(),
         ]);
 
         // Assign the admin role to Admin
-        $adminUser->assignRole('admin');
+        $adminUser->assignRole('root');
 
         // Create and assign a profile to the Admin
         $profile = factory('App\Profile')->make()->getAttributes();

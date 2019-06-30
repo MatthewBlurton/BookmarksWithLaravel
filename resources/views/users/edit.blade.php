@@ -83,7 +83,7 @@
 
         {{-- Profile settings section --}}
         @can('edit profiles')
-        <div class="row justify-content-center">
+        <div class="row justify-content-center mb-4">
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">Profile Settings</div>
@@ -171,7 +171,7 @@
         {{-- Admin section --}}
         @auth
         @if(auth()->user()->can('assignRole', $user) || auth()->user()->can('suspend', $user))
-            <div class="row justify-content-center">
+            <div class="row justify-content-center mb-4">
                 <div class="col-md-8">
                     <div class="card">
                         <div class="card-header">Admin Options</div>
