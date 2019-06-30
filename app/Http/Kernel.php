@@ -21,7 +21,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrustProxies::class,
 
         // Passport middleware
-        App\Http\Middleware\Cors::class,
+        \App\Http\Middleware\Cors::class,
     ];
 
     /**
