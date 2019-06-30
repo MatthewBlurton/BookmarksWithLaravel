@@ -47,7 +47,7 @@ class RolesAndPermissionsSeeder extends Seeder
         // Admin level privelages
         Permission::create(['name' => 'access all ordinary users']);
         Permission::create(['name' => 'access all users']);
-        Permission::create(['name' => 'access admins']);
+        Permission::create(['name' => 'access all accounts']);
         Permission::create(['name' => 'access all tags']);
         Permission::create(['name' => 'access all bookmarks']);
         Permission::create(['name' => 'access all profiles']);
@@ -105,8 +105,7 @@ class RolesAndPermissionsSeeder extends Seeder
             ->givePermissionTo($bookmarksEadBundle)
             ->givePermissionTo($profilesBreadsBundle)
             ->givePermissionTo([
-                'access all users',
-                'access all admins',
+                'access all accounts',
                 'access all tags',
                 'access all bookmarks',
                 'access all profiles',

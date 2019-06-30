@@ -26,13 +26,25 @@ class UserPolicy
      * Determine whether the user can update the profile model.
      *
      * @param  \App\User  $user
-     * @param  \App\Profile  $profile
+     * @param  \App\User  $profile
      * @return mixed
      */
-    public function updateProfile(User $user, Profile $profile)
+    public function updateProfile(User $user, User $target)
     {
-        return $user->id === $profile->user_id
-            || $this->checkPermissions($user, $profile->user->id, 'edit users');
+        return $user->id === $target->id
+            || $this->checkPermissions($user, $target, 'edit profiles');
+    }
+
+    /**
+     * Determine whether the user can do elevated to the user model.
+     *
+     * @param  \App\User  $user
+     * @param  \App\User  $model
+     * @return mixed
+     */
+    public function updateElevate(User $user, User $target)
+    {
+        return $user->id !== $target->id && $this->checkPermissions($user, $target, 'assign role');
     }
 
     /**
@@ -43,7 +55,10 @@ class UserPolicy
      */
     public function assignRole(User $user, User $target)
     {
-        return $this->checkPermissions($user, $target, 'assign role');
+        return $user->id !== $target->id
+            && !$target->hasRole('suspended')
+            && !$user->hasPermissionTo('access all ordinary users')
+            && $this->checkPermissions($user, $target, 'assign role');
     }
 
     /**
@@ -57,7 +72,7 @@ class UserPolicy
      */
     public function suspend(User $user, User $target)
     {
-        return $this->checkPermissions($user, $target, 'suspend user');
+        return $user->id !== $target->id && $this->checkPermissions($user, $target, 'suspend user');
     }
 
     /**
@@ -68,13 +83,13 @@ class UserPolicy
         // Ensure user admins can't change other user admins, and admins
         if ($user->hasAllPermissions($action, 'access all ordinary users'))
         {
-            return !$target->hasAnyPermission('access all ordinary users', 'access all users');
+            return !$target->hasAnyPermission('access all ordinary users', 'access all users', 'access all accounts');
         }// Ensure admins can't change other admins
-        else if (! $user->hasAllPermissions($action, 'access admins'))
+        else if ($user->hasAllPermissions($action, 'access all users'))
         {
-            return !$target->hasPermissionTo('access all users');
+            return !$target->hasAnyPermission('access all users', 'access all accounts');
         }
-        // return true if the user has permission to access all admins
-        return $user->hasAllPermissions($action, 'access admins');
+        // return true if the user has permission to access all accounts
+        return $user->hasAllPermissions($action, 'access all accounts');
     }
 }

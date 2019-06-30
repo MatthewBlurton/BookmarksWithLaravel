@@ -26,7 +26,8 @@ class BookmarksController extends Controller
         $bookmarks = [];
 
         // Only grab bookmarks when it is either associated with the current logged in user, or if the bookmark is public
-        if (auth()->check() && auth()->user()->hasVerifiedEmail()) {
+        if (auth()->check() && auth()->user()->hasVerifiedEmail()
+            && !auth()->user()->hasRole('suspended') ) {
             $bookmarks = auth()->user()->hasPermissionTo('access all bookmarks')
                         ? Bookmark::orderBy('updated_at', 'DESC')->paginate(10)
                         : Bookmark::where('user_id', auth()->id())->orWhere('is_public', true)

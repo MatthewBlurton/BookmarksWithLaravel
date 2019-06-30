@@ -2,6 +2,9 @@
 
 use Illuminate\Database\Seeder;
 
+use App\User;
+use App\Profile;
+
 class UsersDummyTableSeeder extends Seeder
 {
     /**
@@ -27,7 +30,7 @@ class UsersDummyTableSeeder extends Seeder
         Profile::create($profile + ['user_id' => $adminUser->id]);
 
         // Create the verified user-admin
-        $user = App\User::create([
+        $user = User::create([
         	'name'		=> 'UserAdmin',
         	'email'		=> 'user-admin@crosslink.com',
             'password'	=> bcrypt('password'),
@@ -39,10 +42,10 @@ class UsersDummyTableSeeder extends Seeder
 
         // Create and assign a profile to the user-admin
         $profile = factory('App\Profile')->make()->getAttributes();
-        App\Profile::create($profile + ['user_id' => $user->id]);
+        Profile::create($profile + ['user_id' => $user->id]);
 
         // Create the unverified user
-        $user = App\User::create([
+        $user = User::create([
             'name'		=> 'User',
             'email'		=> 'user@crosslink.com',
             'password'	=> bcrypt('password'),
@@ -53,7 +56,7 @@ class UsersDummyTableSeeder extends Seeder
         
         // Create and assign a profile to the user
         $profile = factory('App\Profile')->make()->getAttributes();
-        App\Profile::create($profile + ['user_id' => $user->id]);
+        Profile::create($profile + ['user_id' => $user->id]);
 
         // Generate 16 dummy users for testing the users section of the website
         factory('App\User', 30)->create()

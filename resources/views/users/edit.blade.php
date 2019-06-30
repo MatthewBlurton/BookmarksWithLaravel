@@ -2,26 +2,45 @@
 
 @section('content')
 <div class="container">
-    <form method="POST" action="{{ route('users.update', $user) }}" enctype="multipart/form-data">
-        @method('PATCH')
-        @csrf
-
-        <div class="row">
-            <div class="col">
-                @component('components.errors')
-                <strong>Whoops!</strong> Could not update your account for the following reasons.
-                @endcomponent
-            </div>
+    {{-- <form method="POST" action="{{ route('users.update', $user) }}" enctype="multipart/form-data"> --}}
+    <div class="row">
+        <div class="col">
+            @component('components.errors')
+            <strong>Whoops!</strong> Could not update your account for the following reasons.
+            @endcomponent
         </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            @if($message = Session::get('success'))
+            <div class="alert alert-success" role="alert">
+                <button type="button" class="close" data-dismiss="alert">x</button>
+                <strong>{{ $message }}</strong>
+            </div>
+            @endif
+        </div>
+    </div>
 
-        {{-- User settings section --}}
-        @can('edit users')
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card mb-4">
-                    <div class="card-header">User Settings</div>
-                    <div class="card-body">
-                        {{-- Email input --}}
+    {{-- User settings section --}}
+    @can('edit users')
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">User Settings</div>
+                <div class="card-body">
+                    <form method="POST" action="{{ route('users.update', $user) }}">
+                        @method("PATCH")
+                        @csrf
+
+                        {{-- Name input disabled --}}
+                        <div class="form-group row">
+                            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
+                            <div class="col-md-6">
+                                <input id="name" type="text" class="form-control" value="{{ $user->name }}" disabled>
+                            </div>
+                        </div>
+
+                        {{-- Email input disabled --}}
                         <div class="form-group row">
                             <label for="email"
                                 class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Address') }}</label>
@@ -33,11 +52,11 @@
                         @if(auth()->user()->id === $user->id)
                         {{-- Old Password input --}}
                         <div class="form-group row">
-                            <label for="old_password"
+                            <label for="old-password"
                                 class="col-md-4 col-form-label text-md-right">{{ __('Old Password') }}</label>
                             <div class="col-md-6">
-                                <input id="old_password" type="password"
-                                    class="form-control @error('password') is-invalid @enderror" name="old_password"
+                                <input id="old-password" type="password" id="old-password"
+                                    class="form-control @error('password') is-invalid @enderror" name="old-password"
                                     autocomplete="current-password">
                                 @error('password')
                                 <span class="invalid-feedback" role="alert">
@@ -46,6 +65,7 @@
                                 @enderror
                             </div>
                         </div>
+
                         {{-- Password input --}}
                         <div class="form-group row">
                             <label for="password"
@@ -67,27 +87,32 @@
                                     name="password_confirmation" required autocomplete="new-password">
                             </div>
                         </div>
-                        @elseif(auth()->user()->hasPermissionTo('access all users'))
-                        <div class="form-group row">
-                            <div class="col-md-10">
-                                <a href="" class="btn btn-primary">Reset Password</a>
+
+                        {{-- Submit form --}}
+                        <div class="form-group-row">
+                            <div class="offset-md-2 col-md-8">
+                                <button type="submit" class="btn btn-primary btn-block">Reset Password</a>
                             </div>
                         </div>
-                        @endif
-                    </div>
+                    </form>
+                    @endif
                 </div>
             </div>
         </div>
-        @endcan
-        {{-- End user settings section --}}
+    </div>
+    @endcan
+    {{-- End user settings section --}}
 
-        {{-- Profile settings section --}}
-        @can('edit profiles')
-        <div class="row justify-content-center mb-4">
-            <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">Profile Settings</div>
-                    <div class="card-body">
+    {{-- Profile settings section --}}
+    @can('edit profiles')
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">Profile Settings</div>
+                <div class="card-body">
+                    <form action="{{ route('profiles.update', $user) }}" method="post" enctype="multipart/form-data">
+                        @method("PATCH")
+                        @csrf
                         {{-- First name --}}
                         <div class="form-group row">
                             <label for="first_name"
@@ -157,42 +182,73 @@
                         </div>
 
                         <div class="form-group row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">Apply</button>
+                            <div class="col-md-8 offset-md-2">
+                                <button type="submit" class="btn btn-primary btn-block">Apply</button>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
-        @endcan
-        {{-- End profile section --}}
+    </div>
+    @endcan
+    {{-- End profile section --}}
 
-        {{-- Admin section --}}
-        @auth
-        @if(auth()->user()->can('assignRole', $user) || auth()->user()->can('suspend', $user))
-            <div class="row justify-content-center mb-4">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-header">Admin Options</div>
-                        <div class="card-body">
-                            @can('assignRole', $user)
-                                <p>Assign role for user!</p>
-                            @endcan
+    {{-- Admin section --}}
+    @auth
+    @if(auth()->user()->can('assignRole', $user) || auth()->user()->can('suspend', $user))
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">Admin Options</div>
+                <div class="card-body">
 
-                            @can('suspend', $user)
-                            <div class="form-group-row">
-                                <div class="col-md-6 offset-md-4">
-                                    <button type="submit" class="btn btn-danger">Suspend user</button>
-                                </div>
+                    @can('assignRole', $user)
+                    <form action="{{ route('users.update.role', $user) }}" method="post">
+                        @method("PATCH")
+                        @csrf
+                        <div class="form-group row">
+                            <div class="col-md-8 mx-auto">
+                                <select name="role" id="roles" class="custom-select">
+                                    @can('access all accounts')
+                                    <option value="admin" @if($user->hasRole('admin')) selected @endif>Admin</option>
+                                    <option value="user-admin" @if($user->hasRole('user-admin')) selected @endif>User Admin</option>
+                                    <option value="user" @if($user->hasRole('user')) selected @endif>User</option>
+                                    @else
+                                    <option value="user" @if($user->hasRole('user')) selected @endif>User</option>
+                                    <option value="user-admin" @if($user->hasRole('admin')) selected @endif>User Admin</option>
+                                    @endcan
+                                </select>
                             </div>
-                            @endcan
                         </div>
-                    </div>
+                        <div class="form-group-row mb-3">
+                            <div class="col-md-8 offset-md-2">
+                                <button type="submit" class="btn btn-primary btn-block">Change Role</button>
+                            </div>
+                        </div>
+                    </form>
+                    @endcan
+
+                    @can('suspend', $user)
+                    <form action="{{ route('users.suspend', $user) }}" method="post">
+                        @method("DELETE")
+                        @csrf
+                        <div class="form-group-row">
+                            <div class="col-md-8 offset-md-2">
+                                @if(!$user->hasRole('suspended'))
+                                <button type="submit" class="btn btn-danger btn-block">Suspend user</button>
+                                @else
+                                <button type="submit" class="btn btn-success btn-block">Remove Suspension</button>
+                                @endif
+                            </div>
+                        </div>
+                    </form>
+                    @endcan
                 </div>
             </div>
-        @endif
-        @endauth
-    </form>
+        </div>
+    </div>
+    @endif
+    @endauth
 </div>
 @endsection

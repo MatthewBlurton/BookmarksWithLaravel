@@ -2,16 +2,6 @@
 
 @section('content')
 <div class="container">
-    @can('edit users')
-    @if(auth()->user()->id === $user->id
-    || $user->hasPermissionTo('access all users'))
-    <div class="row mb-3">
-        <div class="col-auto">
-            <a href="{{ route('users.edit', $user) }}" class="btn btn-primary">Edit User</a>
-        </div>
-    </div>
-    @endif
-    @endcan
     @if(!$user->hasVerifiedEmail())
     @auth
     @if (auth()->user()->id === $user->id)
@@ -32,10 +22,19 @@
     @endauth
     @endif
     <div class="row">
+        @if(is_null($user->profile->avatar))
         <div class="col-md-3 col-lg-2">
             <img src="https://via.placeholder.com/150"
-                class="img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}" alt="">
+                class="img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}"
+                style="max-height:150px; max-width:150px;" alt="User Avatar">
         </div>
+        @else
+        <div class="col-md-3 col-lg-2">
+            <img src="{{ $user->profile->avatar }}"
+                class="img-fluid ${3|rounded-top,rounded-right,rounded-bottom,rounded-left,rounded-circle,|}"
+                style="max-height:150px; max-width:150px;" alt="User Avatar">
+        </div>
+        @endif
         <div class="col-md-9 col-lg-10">
             <h1>{{ $user->name }}</h1>
         </div>

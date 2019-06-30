@@ -18,7 +18,8 @@ class TagsController extends Controller
     public function index()
     {
         // If the user is logged in and the email is verified, show all the tags
-        if (auth()->check() && auth()->user()->hasVerifiedEmail()) {
+        if (auth()->check() && auth()->user()->hasVerifiedEmail()
+            && !auth()->user()->hasRole('suspended')) {
             $tags = Tag::orderBy('updated_at', 'DESC')->paginate(30);
         } else {// Otherwise only show 30 of the most popular
             $tags = Tag::orderBy('updated_at', 'DESC')->take(30)->get();

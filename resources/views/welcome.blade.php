@@ -103,6 +103,7 @@
                     <a href="/tags">Tags</a>
                     @auth
                     <a href="/users/{{ Auth::user()->id }}">My Account</a>
+                    <a href="{{ route('users.edit', Auth::user()) }}">My Account Settings</a>
                     @endauth
                 </div>
             </div>

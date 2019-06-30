@@ -19,7 +19,6 @@
                 @endforeach
             </p>
         </div>
-        
     </div>
 
     @if($tags instanceof \Illuminate\Pagination\LengthAwarePaginator)
