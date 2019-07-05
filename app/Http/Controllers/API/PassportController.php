@@ -58,8 +58,19 @@ class PassportController extends Controller
             $token = auth()->user()->createToken('CrossLinkToken')->accessToken;
             return response()->json(['token' => $token], 200);
         } else {
-            return response()->json(['error' => 'UnAuthorised'], 401);
+            return response()->json(['error' => 'Unauthorised'], 401);
         }
+    }
+
+    /**
+     * Handles the Logout Request
+     */
+    public function logout()
+    {
+        // logout the user by revoking the token
+        $token = auth()->user()->token();
+        $token->revoke();
+        return response()->json(['success' => 'Successfully logged out'], 200);
     }
 
     /**

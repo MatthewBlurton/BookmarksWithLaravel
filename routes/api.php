@@ -18,11 +18,10 @@ Route::post('register', 'API\PassportController@register');
 
 Route::middleware('auth:api')->group(function () {
     Route::get('user', 'API\PassportController@details');
+    Route::get('logout', 'API\PassportController@logout');
 });
 
-// Route::match(['get', 'head'], 'bookmarks', 'API\BookmarksController@index')->name('api.bookmarks');
 Route::apiResource('bookmarks', 'API\BookmarksController');
-
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
