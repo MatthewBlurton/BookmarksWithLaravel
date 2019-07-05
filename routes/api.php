@@ -13,18 +13,16 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::group([
-    'prefix' => 'auth'
-], function () {
-    Route::post('login', 'Auth\AuthController@login')->name('login');
-    Route::post('register', 'Auth\AuthController@register');
-    Route::group([
-      'middleware' => 'auth:api'
-    ], function() {
-        Route::get('logout', 'Auth\AuthController@logout');
-        Route::get('user', 'Auth\AuthController@user');
-    });
+Route::post('login', 'API\PassportController@login');
+Route::post('register', 'API\PassportController@register');
+
+Route::middleware('auth:api')->group(function () {
+    Route::get('user', 'API\PassportController@details');
 });
+
+// Route::match(['get', 'head'], 'bookmarks', 'API\BookmarksController@index')->name('api.bookmarks');
+Route::apiResource('bookmarks', 'API\BookmarksController');
+
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

@@ -21,10 +21,10 @@ class UsersDummyTableSeeder extends Seeder
             'password'	=> bcrypt('password'),
             'email_verified_at' => now(),
         ]);
-        
+
         // Assign the admin role to Admin
         $adminUser->assignRole('admin');
-    
+
         // Create and assign a profile to the Admin
         $profile = factory('App\Profile')->make()->getAttributes();
         Profile::create($profile + ['user_id' => $adminUser->id]);
@@ -50,10 +50,10 @@ class UsersDummyTableSeeder extends Seeder
             'email'		=> 'user@crosslink.com',
             'password'	=> bcrypt('password'),
         ]);
-        
+
         // Assign the admin role to user
         $user->assignRole('user');
-        
+
         // Create and assign a profile to the user
         $profile = factory('App\Profile')->make()->getAttributes();
         Profile::create($profile + ['user_id' => $user->id]);

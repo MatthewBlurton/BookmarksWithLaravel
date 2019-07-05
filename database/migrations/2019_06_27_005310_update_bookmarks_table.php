@@ -28,7 +28,7 @@ class UpdateBookmarksTable extends Migration
     public function down()
     {
         Schema::table('bookmarks', function(Blueprint $table) {
-            $table->dropColumn('user_id');
+            // $table->dropIndex('user_id');
             $table->dropColumn('is_public');
         });
     }

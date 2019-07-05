@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\API\Auth;
 
 use App\User;
 use App\Profile;
@@ -41,7 +41,7 @@ class AuthController extends Controller
             )->toDateTimeString()
         ]);
     }
-    
+
     public function register(Request $request)
     {
         $request->validate([
@@ -51,7 +51,7 @@ class AuthController extends Controller
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string'
         ]);
-        
+
         $user = User::Create([
             'name' => $request->name,
             'email' => $request->email,
@@ -76,7 +76,7 @@ class AuthController extends Controller
             'message' => 'Successfully created user!'
         ], 201);
     }
-    
+
     public function logout(Request $request)
     {
         $request->user()->token()->revoke();
@@ -84,7 +84,7 @@ class AuthController extends Controller
             'message' => 'Successfully logged out'
         ]);
     }
-  
+
     /**
      * Get the authenticated User
      *
@@ -92,7 +92,6 @@ class AuthController extends Controller
      */
     public function user(Request $request)
     {
-        return json(["test" => "test"]);
-        // return response()->json($request->user());
+        return response()->json($request->user(), 200);
     }
 }

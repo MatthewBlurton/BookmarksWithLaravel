@@ -73,8 +73,8 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
+        // Assign the standard user role for the newly created account
         $user->assignRole('user');
-
 
         // Attempt to attach a profile to the user, if unsuccessfull delete the user
         try {
@@ -89,7 +89,10 @@ class RegisterController extends Controller
             $user->delete();
             throw $e;
         }
-        
+
+        // Create an access token for the api
+        $user->createToken('CrossLinkToken');
+
         return $user;
     }
 }
