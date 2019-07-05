@@ -49,11 +49,14 @@ class PassportController extends Controller
      */
     public function login(Request $request)
     {
+        // assign the credentails from the request
         $credentials = [
             'email' => $request->email,
             'password' => $request->password,
         ];
 
+        // Attempt to login, if successfull, create a token that can be used to access more of the api
+        // Otherwise repond with an Unauthorised 401 error
         if (auth()->attempt($credentials)) {
             $token = auth()->user()->createToken('CrossLinkToken')->accessToken;
             return response()->json(['token' => $token], 200);
@@ -64,6 +67,7 @@ class PassportController extends Controller
 
     /**
      * Handles the Logout Request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function logout()
     {

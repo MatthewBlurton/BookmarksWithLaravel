@@ -14,29 +14,15 @@ class BookmarksController extends Controller
     {
         // Authorization middleware (if the user does not have appropriate permissions, do a not currently logged in error)
         $this->middleware('auth')->except(['index', 'show']);
-        $this->middleware('permission:edit bookmarks')->only(['edit', 'update']);
-        $this->middleware('permission:add bookmarks')->only(['create', 'store']);
-        $this->middleware('permission:delete bookmarks')->only('destroy');
-        
+        $this->middleware('can:update,bookmark')->only(['edit', 'update']);
+        $this->middleware('can:create,bookmark')->only(['create', 'store']);
+        $this->middleware('can:delete,bookmark')->only('destroy');
     }
 
     // Show all bookmarks
     function index()
     {
-        $bookmarks = [];
-
-        // Only grab bookmarks when it is either associated with the current logged in user, or if the bookmark is public
-        if (auth()->check() && auth()->user()->hasVerifiedEmail()
-            && !auth()->user()->hasRole('suspended') ) {
-            $bookmarks = auth()->user()->hasPermissionTo('access all bookmarks')
-                        ? Bookmark::orderBy('updated_at', 'DESC')->paginate(10)
-                        : Bookmark::where('user_id', auth()->id())->orWhere('is_public', true)
-                            ->orderBy('updated_at', 'DESC')->paginate(10);
-        }
-        else {// If the user is a guest or not verified, only show 10 of the most recent bookmarks
-            $bookmarks = Bookmark::where('is_public', true)->orderBy('updated_at', 'DESC')
-                            ->take(10)->get();
-        }
+        $bookmarks = Bookmark::getFilteredBookmarks();
 
         return view (
             'bookmarks.index',
