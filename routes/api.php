@@ -13,12 +13,16 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::post('login', 'API\PassportController@login');
-Route::post('register', 'API\PassportController@register');
+Route::post('login', 'API\Auth\PassportController@login');
+Route::post('register', 'API\Auth\PassportController@register');
 
 Route::middleware('auth:api')->group(function () {
-    Route::get('user', 'API\PassportController@details');
-    Route::get('logout', 'API\PassportController@logout');
+    Route::get('user', 'API\Auth\PassportController@details');
+    Route::get('logout', 'API\Auth\PassportController@logout');
 });
 
 Route::apiResource('bookmarks', 'API\BookmarksController');
+
+// Verification Routes
+Route::get('email/verify/{id}','API\Auth\VerificationController@verify')->name('user.verify');
+Route::get('email/resend/{id}', 'API\Auth\VerificationController@resend')->name('user.resend');

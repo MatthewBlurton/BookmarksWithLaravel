@@ -1,10 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers\API\Auth;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
+
+use Auth;
+use Validator;
+
+use Illuminate\Foundation\Auth\VerifiesEmails;
+use Illuminate\Auth\Events\Verified;
 
 use App\User;
 use App\Profile;
@@ -35,11 +41,14 @@ class PassportController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
 
+        $user->sendApiEmailVerificationNotification();
+
         // Create a token for the api to use for authentication
         $token = $user->createToken('CrossLinkToken')->accessToken;
 
         // Show the token from the api for later use in authentication
-        return response()->json(['token' => $token], 201);
+        return response()->json(['token' => $token,
+            'message' => 'Your account has been created! To verify your account check your email.'], 201);
     }
 
     /**
@@ -81,13 +90,12 @@ class PassportController extends Controller
     /**
      * Return the details of the currently authenticated user
      *
-     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function details()
     {
         $user = auth()->user()->toArray();
         $user['profile'] = auth()->user()->profile;
-        return response()->json(['user' => $user], 200);
+        return response()->json($user, 200);
     }
 }

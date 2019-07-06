@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+use App\Notifications\API\VerifyEmail as VerifyApiEmail;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -109,5 +110,10 @@ class User extends Authenticatable implements MustVerifyEmail
         ]);
 
         return $user;
+    }
+
+    public function sendApiEmailVerificationNotification()
+    {
+        $this->notify(new VerifyApiEmail); // Notify the email verification api if this function is called
     }
 }
