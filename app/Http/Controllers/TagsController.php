@@ -31,16 +31,7 @@ class TagsController extends Controller
     public function show(Tag $tag)
     {
         // If the user is logged in and the email is verified, and the bookmark is public, show each bookmark associated with this tag
-        if (auth()->check() && auth()->user()->hasVerifiedEmail()) {
-            $bookmarks = auth()->user()->hasPermissionTo('access all bookmarks')
-                ? $tag->bookmarks()->orderBy('updated_at', 'DESC')->paginate(7)
-                : $tag->bookmarks()->where('user_id', auth()->id())->orWhere('is_public', true)
-                    ->wherePivot('tag_id', $tag->id)
-                    ->orderBy('updated_at', 'DESC')->paginate(7);
-        } else {// Otherwise only show 30 of the most popular
-            $bookmarks = $tag->bookmarks()->where('is_public', true)->orderBy('updated_at', 'DESC')
-                             ->take(8)->get();
-        }
+        $bookmarks = $tag->getAssociatedFilteredBookmarks();
         return view("bookmarks.tags.show", compact('tag', 'bookmarks'));
     }
 

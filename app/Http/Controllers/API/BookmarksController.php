@@ -15,7 +15,8 @@ class BookmarksController extends Controller
         // Authorization middleware (if the user does not have appropriate permissions, do a not currently logged in error)
         $this->middleware('auth:api')->except(['index', 'show']);
         $this->middleware('can:update,bookmark')->only('update');
-        $this->middleware('can:create,bookmark')->only('store');
+        $this->middleware('can:view,bookmark')->only('view');
+        $this->middleware('can:create,App\Bookmark')->only('store');
         $this->middleware('can:delete,bookmark')->only('destroy');
     }
 
@@ -49,7 +50,24 @@ class BookmarksController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $attributes = $request->validate([
+            'title' => ['required', 'min:3'],
+            'url' => ['required', 'url'],
+            'description' => ['min:3'],
+        ]);
+
+        $attributes['user_id'] = auth()->id();
+
+        if ($bookmark = Bookmark::create($attributes)) {
+            return response()->json([
+                'success' => true,
+                'data' => $bookmark->toArray(),
+            ], 201);
+        }
+        return response()->json([
+            'success' => false,
+            'message' => 'User is not authorized to add a bookmark',
+        ], 401);
     }
 
     /**
@@ -72,20 +90,50 @@ class BookmarksController extends Controller
      */
     public function update(Request $request, Bookmark $bookmark)
     {
-        $bookmark->update($request->all());
-        return $bookmark;
+        if (!$bookmark) {
+            return response()->json([
+                'success' => 'false',
+                'message' => 'Bookmark could not be found',
+            ], 400);
+        }
+
+        if ($bookmark->fill($request->all())->save()) {
+            return response()->json([
+                'success' => 'true',
+                'message' => 'bookmark successfully updated'
+            ], 200);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Bookmark could not be updated'
+        ], 500);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Bookmark  $bookmark
+     * @param  App\Bookmark  $bookmark
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Bookmark $bookmark)
+    public function destroy(?Bookmark $id)
     {
+        if (!$bookmark) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Bookmark could not be found',
+            ], 400);
+        }
 
+        if ($bookmark->delete()) {
+            return response()->json([
+                'success' => true,
+            ], 200);
+        }
 
-        return 204;
+        return response()->json([
+            'success' => false,
+            'message' => 'Bookmark could not be deleted'
+        ], 500);
     }
 }

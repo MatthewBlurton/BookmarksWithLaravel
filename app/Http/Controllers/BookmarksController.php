@@ -15,7 +15,7 @@ class BookmarksController extends Controller
         // Authorization middleware (if the user does not have appropriate permissions, do a not currently logged in error)
         $this->middleware('auth')->except(['index', 'show']);
         $this->middleware('can:update,bookmark')->only(['edit', 'update']);
-        $this->middleware('can:create,bookmark')->only(['create', 'store']);
+        $this->middleware('can:create,App\Bookmark')->only(['create', 'store']);
         $this->middleware('can:delete,bookmark')->only('destroy');
     }
 

@@ -49,13 +49,7 @@ class RegisterController extends Controller
      */
     protected function validator(array $data)
     {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'first_name' => ['required', 'string', 'max:128'],
-            'family_name' => ['required', 'string', 'max:128'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-        ]);
+        return Validator::make($data, User::rules());
     }
 
     /**
@@ -66,33 +60,6 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        // Create a user
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
-
-        // Assign the standard user role for the newly created account
-        $user->assignRole('user');
-
-        // Attempt to attach a profile to the user, if unsuccessfull delete the user
-        try {
-            Profile::create([
-                'user_id' => $user->id,
-                'first_name' => $data['first_name'],
-                'family_name' => $data['family_name'],
-            ]);
-        }
-        catch (\Exception $e)
-        {
-            $user->delete();
-            throw $e;
-        }
-
-        // Create an access token for the api
-        $user->createToken('CrossLinkToken');
-
-        return $user;
+        return User::createWithProfile($data);
     }
 }

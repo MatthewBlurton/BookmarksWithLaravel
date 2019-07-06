@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\Controller;
 
 use App\User;
+use App\Profile;
 
 class PassportController extends Controller
 {
@@ -17,28 +19,27 @@ class PassportController extends Controller
      */
     public function Register(Request $request)
     {
-        // Make sure all the data sent from the request is valid
-        $this->validate($request, [
-            'name' => 'required|min:3',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
-        ]);
+        $user;
+        $data = [];
+        // Attempt to validate the request
+        try {
+            $data = $this->validate($request, User::rules());
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Show all the errors if validation fails
+            return response()->json($e->errors(), 400);
+        }
 
-        // Create a new user
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password)
-        ]);
-
-        // Assign the standard user role for the user
-        $user->assignRole('user');
+        try {
+            $user = User::createWithProfile($data);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
 
         // Create a token for the api to use for authentication
         $token = $user->createToken('CrossLinkToken')->accessToken;
 
         // Show the token from the api for later use in authentication
-        return response()->json(['token' => $token], 200);
+        return response()->json(['token' => $token], 201);
     }
 
     /**
@@ -85,6 +86,8 @@ class PassportController extends Controller
      */
     public function details()
     {
-        return response()->json(['user' => auth()->user()], 200);
+        $user = auth()->user()->toArray();
+        $user['profile'] = auth()->user()->profile;
+        return response()->json(['user' => $user], 200);
     }
 }

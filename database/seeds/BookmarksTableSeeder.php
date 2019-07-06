@@ -11,7 +11,7 @@ class BookmarksTableSeeder extends Seeder
      */
     public function run()
     {
-        factory('App\Bookmark', 100)->create()
+        factory('App\Bookmark', 30)->create()
             ->each(function (App\Bookmark $bookmark) {
                 for ($i = 0; $i < rand(2, 5); $i++) {
                     $tag = factory('App\Tag')->make();
