@@ -20,6 +20,8 @@ Auth::routes(['verify' => true]);
 Route::get('home', 'HomeController@index')->name('home');
 
 Route::resource('bookmarks', 'BookmarksController');
+Route::match(['put', 'patch'], 'bookmarks/{bookmark}/tag/attach', 'BookmarksController@attachTag')->name('bookmarks.tag.attach');
+Route::delete('bookmarks/{bookmark}/tag/{tag}/detach', 'BookmarksController@detachTag')->name('bookmarks.tag.detach');
 
 // Route for users
 Route::match(['get', 'head'], 'users', 'UsersController@index')->name("users.index");
@@ -34,5 +36,4 @@ Route::match(['get', 'head'], 'users/{user}/edit', 'UsersController@edit')->name
 // Route for assigning and removing tags
 Route::match(['get', 'head'], 'tags', 'TagsController@index')->name('tags.index');
 Route::match(['get', 'head'], 'tags/{tag}', 'TagsController@show')->name('tags.show');
-Route::match(['put', 'patch'], 'tags/{bookmark}', 'TagsController@update')->name('tags.update');
-Route::delete('tags/{bookmark}/{tag}', 'TagsController@destroy')->name('tags.destroy');
+Route::delete('/tags/{tag}', 'TagsController@destroy')->name('tags.destroy');

@@ -11,19 +11,13 @@ class TagsController extends Controller
 {
     public function __construct()
     {
-
+        $this->middleware(['auth', 'can:delete,tag'])->only('destroy');
     }
 
-    // Display all tags
+    // Display a set of ten tags
     public function index()
     {
-        // If the user is logged in and the email is verified, show all the tags
-        if (auth()->check() && auth()->user()->hasVerifiedEmail()
-            && !auth()->user()->hasRole('suspended')) {
-            $tags = Tag::orderBy('updated_at', 'DESC')->paginate(30);
-        } else {// Otherwise only show 30 of the most popular
-            $tags = Tag::orderBy('updated_at', 'DESC')->take(30)->get();
-        }
+        $tags = Tag::getFilteredTags(auth()->user());
 
         return view('bookmarks.tags.index', compact('tags'));
     }
@@ -35,20 +29,18 @@ class TagsController extends Controller
         return view("bookmarks.tags.show", compact('tag', 'bookmarks'));
     }
 
-    public function update(Bookmark $bookmark)
+    /**
+     * Deletes the selected tag. Any bookark associated with this tag will lose their assoication to this tag
+     *
+     * @param \App\Tag $tag
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(Tag $tag)
     {
-        $this->authorize('update', $bookmark);
-        $attributes = request()->validate([
-            'name' => ['min:3'],
-        ]);
-        $bookmark->attachTag($attributes['name']);
-        return back();
-    }
-
-    public function destroy(Bookmark $bookmark, Tag $tag)
-    {
-        $this->authorize('update', $bookmark);
-        $bookmark->detachTag($tag);
-        return back();
+        $tagName = isset($tag) ? $tag->name : null;
+        if ($tag->delete()) {
+            return redirect(route('tags.index'))->with(['success' => $tagName . ' successfully deleted']);
+        };
+        return redirect(route('tags.index'))->withErrors(['message' => 'Failed to delete tag']);
     }
 }

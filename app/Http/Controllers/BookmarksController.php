@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Bookmark;
+use App\Tag;
 use App\Policies\BookmarkPolicy;
 
 class BookmarksController extends Controller
@@ -14,7 +15,7 @@ class BookmarksController extends Controller
     {
         // Authorization middleware (if the user does not have appropriate permissions, do a not currently logged in error)
         $this->middleware('auth')->except(['index', 'show']);
-        $this->middleware('can:update,bookmark')->only(['edit', 'update']);
+        $this->middleware('can:update,bookmark')->only(['edit', 'update', 'attachTag', 'detachTag']);
         $this->middleware('can:create,App\Bookmark')->only(['create', 'store']);
         $this->middleware('can:delete,bookmark')->only('destroy');
     }
@@ -22,7 +23,8 @@ class BookmarksController extends Controller
     // Show all bookmarks
     function index()
     {
-        $bookmarks = Bookmark::getFilteredBookmarks();
+        $user = auth()->check() ? auth()->user() : null;
+        $bookmarks = Bookmark::getFilteredBookmarks($user);
 
         return view (
             'bookmarks.index',
@@ -104,5 +106,35 @@ class BookmarksController extends Controller
         $bookmark->delete();
 
         return redirect('bookmarks');
+    }
+
+    /**
+     * Used to attach a tag to a bookmark
+     * Requires a tag name in the request
+     *
+     * @param App\Bookmark $bookmark
+     * @return \Illuminate\Http\Response
+     */
+    public function attachTag(Bookmark $bookmark)
+    {
+        $attributes = request()->validate([
+            'name' => 'min:3',
+        ]);
+
+        $bookmark->attachTag($attributes['name']);
+        return back();
+    }
+
+    /**
+     * Used to detach a tag from the bookmark
+     *
+     * @param App\Bookmark $bookmark
+     * @param App\Tag $tag
+     * @return \Illuminate\Http\Response
+     */
+    public function detachTag(Bookmark $bookmark, Tag $tag)
+    {
+        $bookmark->detachTag($tag);
+        return back();
     }
 }

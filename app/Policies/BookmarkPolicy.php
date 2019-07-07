@@ -62,6 +62,7 @@ class BookmarkPolicy
      *
      * @param  \App\User  $user
      * @param  \App\Bookmark  $bookmark
+     * @param string $action
      * @return bool
      */
     private function checkPermissions(User $user, Bookmark $bookmark, string $action)

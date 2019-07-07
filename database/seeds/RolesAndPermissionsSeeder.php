@@ -32,6 +32,9 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'delete bookmarks']);
         Permission::create(['name' => 'search bookmarks']);
 
+        // Tag privelages
+        Permission::create(['name' => 'delete tag']);
+
         // Profile privelages
         Permission::create(['name' => 'browse profiles']);
         Permission::create(['name' => 'read profiles']);
@@ -91,6 +94,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Role::create(['name' => 'admin'])
             ->givePermissionTo($usersEdBundle)
             ->givePermissionTo($bookmarksEadBundle)
+            ->givePermissionTo('delete tag')
             ->givePermissionTo($profilesBreadsBundle)
             ->givePermissionTo([
                 'access all users',
@@ -103,6 +107,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Role::create(['name' => 'root'])
             ->givePermissionTo($usersEdBundle)
             ->givePermissionTo($bookmarksEadBundle)
+            ->givePermissionTo('delete tag')
             ->givePermissionTo($profilesBreadsBundle)
             ->givePermissionTo([
                 'access all accounts',

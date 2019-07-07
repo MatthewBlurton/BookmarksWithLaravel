@@ -13,16 +13,31 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::post('login', 'API\Auth\PassportController@login');
-Route::post('register', 'API\Auth\PassportController@register');
 
-Route::middleware('auth:api')->group(function () {
-    Route::get('user', 'API\Auth\PassportController@details');
-    Route::get('logout', 'API\Auth\PassportController@logout');
+Route::name('api.')->group(function() {
+    // User account routes
+    Route::middleware('guest')->group(function () {
+        Route::post('login', 'API\Auth\PassportController@login')->name('login');
+        Route::post('register', 'API\Auth\PassportController@register')->name('register');
+    });
+
+    Route::middleware('auth:api')->group(function () {
+        Route::get('user', 'API\Auth\PassportController@details')->name('user');
+        Route::get('logout', 'API\Auth\PassportController@logout')->name('logout');
+    });
+
+    Route::apiResource('bookmarks', 'API\BookmarksController');
+    Route::match(['put', 'patch'], 'bookmarks/{bookmark}/tag/attach', 'API\BookmarksController@attachTag')->name('bookmarks.tag.attach');
+    Route::delete('bookmarks/{bookmark}/{tag}', 'API\BookmarksController@detachTag')->name('bookmarks.tag.detach');
+
+    // Tag routes
+    Route::name('tags.')->group(function() {
+        Route::match(['get', 'head'], 'tags', 'API\TagsController@index')->name('index');
+        Route::match(['get', 'head'], 'tags/{tag}', 'API\TagsController@show')->name('show');
+        Route::delete('tags/{tag}', 'Api\TagsController@destroy')->name('destroy');
+    });
+
+    // Verification Routes
+    Route::get('email/verify/{id}','API\Auth\VerificationController@verify')->name('verification.verify');
+    Route::get('email/resend/{id}', 'API\Auth\VerificationController@resend')->name('verification.resend');
 });
-
-Route::apiResource('bookmarks', 'API\BookmarksController');
-
-// Verification Routes
-Route::get('email/verify/{id}','API\Auth\VerificationController@verify')->name('user.verify');
-Route::get('email/resend/{id}', 'API\Auth\VerificationController@resend')->name('user.resend');

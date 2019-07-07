@@ -1,16 +1,24 @@
 @extends('layouts.app')
 
+@section('breadcrumbs')
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('bookmarks.index')}}">Bookmarks</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ $bookmark->title }}</li>
+    </ol>
+</nav>
+@endsection
+
 @section('content')
 <div class="container">
     <div class="row">
-        <a href="/bookmarks" class="btn btn-primary">< Back</a>
-    </div>
-    <div class="row">
         <div class="col">
-            <h1>Title</h1>
-            <p>{{ $bookmark->title }}</p>
-            <h2>URL</h2>
-            <a href="{{ $bookmark->url }}">{{ $bookmark->url }}</a>
+            <div class="page-header">
+                <h1>{{ $bookmark->title }}</h1>
+                <h2 class="h3"><a href="{{ $bookmark->url }}">{{ $bookmark->url }}</a></h2>
+            </div>
+
             <h2>Description</h2>
             <p>{{ $bookmark->description }}</p>
             <h2>Owner</h2>
@@ -31,7 +39,7 @@
                 </div>
                 @can('update', $bookmark)
                 <div class="row">
-                    <form method="POST" action="/tags/{{ $bookmark->id }}" class="col-sm-6">
+                    <form method="POST" action="{{ route('bookmarks.tag.attach', $bookmark) }}" class="col-sm-6">
                         @method("PATCH")
                         @csrf
                         <div class="input-group mb-3">
@@ -50,7 +58,7 @@
                     <div class="col-sm-6">
                         <ul class="list-group">
                             @foreach ($bookmark->tags as $aTag)
-                            <form method="POST" action="/tags/{{ $bookmark->id }}/{{ $aTag->id }}">
+                            <form method="POST" action="{{ route('bookmarks.tag.detach', ['bookmark' => $bookmark, 'tag' => $aTag,]) }}">
                                 @method("DELETE")
                                 @csrf
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -66,7 +74,7 @@
                         <div class="col">
                             <ul class="list-group">
                                 @foreach ($bookmark->tags as $aTag)
-                                <li class="list-group-item"><a href="{{ route('tags.show', $aTag) }}" class="badge badge-secondary"><strong>{{ $aTag->name }}</strong></a></li>
+                                <li class="list-group-item"><a href="{{ back() }}" class="badge badge-secondary"><strong>{{ $aTag->name }}</strong></a></li>
                                 @endforeach
                             </ul>
                         </div>

@@ -4,6 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
+use App\User;
+
 class Tag extends Model
 {
     protected $fillable = [
@@ -16,34 +18,36 @@ class Tag extends Model
     }
 
     /**
+     * If the user is logged in, the email is verified, and the user is not suspended, show all the tags
+     * @param App\User $user
+     */
+    public static function getFilteredTags(?User $user)
+    {
+        if ($user && $user->hasVerifiedEmail() && !$user->hasRole('suspended')) {
+            return Tag::orderBy('updated_at', 'DESC')->paginate(30);
+        } else {// Otherwise only show 30 of the most popular
+            return Tag::orderBy('updated_at', 'DESC')->take(30)->get();
+        }
+    }
+
+    /**
      * Gathers all the bookmarks associated with this tag, then filters them based on
      * whether it is owned by the user, whether the user has access to all bookmarks,
      * or if the user is a guest or suspended.
+     *
+     * @param App\User $user
      * @return App\Bookmark
      */
-    public function getAssociatedFilteredBookmarks()
+    public function getAssociatedFilteredBookmarks(?User $user = null)
     {
-        // Get the user based on whether the guard is the api page, or a web page
-        $user = auth()->user();
-        if (auth()->guard('api')->check())
-        {
-            $user = auth()->guard('api')->user();
-        }
-
         // If the user is logged in and the email is verified, and the bookmark is public, show each bookmark associated with this tag
         if ($user && !$user->hasRole('suspended') && $user->hasVerifiedEmail()) {
             return $user->hasPermissionTo('access all bookmarks')
-                ? $tag->bookmarks()->orderBy('updated_at', 'DESC')->paginate(7)
-                : $tag->bookmarks()->where('user_id', auth()->id())->orWhere('is_public', true)
+                ? $this->bookmarks()->orderBy('updated_at', 'DESC')->paginate(7)
+                : $this->bookmarks()->where('user_id', auth()->id())->orWhere('is_public', true)
                     ->orderBy('updated_at', 'DESC')->paginate(7);
-
-                    // $bookmarks = auth()->user()->hasPermissionTo('access all bookmarks')
-                    // ? $tag->bookmarks()->orderBy('updated_at', 'DESC')->paginate(7)
-                    // : $tag->bookmarks()->where('user_id', auth()->id())->orWhere('is_public', true)
-                    //     ->wherePivot('tag_id', $tag->id)
-                    //     ->orderBy('updated_at', 'DESC')->paginate(7);
         } else {// Otherwise only show 30 of the most popular
-            return $tag->bookmarks()->where('is_public', true)->orderBy('updated_at', 'DESC')
+            return $this->bookmarks()->where('is_public', true)->orderBy('updated_at', 'DESC')
                         ->take(8)->get();
         }
     }

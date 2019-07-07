@@ -6,7 +6,7 @@
 <body>
     <div id="app">
         @include('partials.header')
-
+        @yield('breadcrumbs')
         <main class="py-4">
             @yield('content')
         </main>

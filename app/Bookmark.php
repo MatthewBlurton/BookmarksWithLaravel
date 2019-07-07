@@ -26,17 +26,11 @@ class Bookmark extends Model
     /**
      * Used to gather a set of bookmarks based on the currently logged in user's permissions.
      * Uses pagination for authenticated, non-suspended users
+     * @param App\User $user
      * @return App\Bookmark
      */
-    public static function getFilteredBookmarks()
+    public static function getFilteredBookmarks(?User $user = null)
     {
-        // Get the user based on whether the guard is the api page, or a web page
-        $user = auth()->user();
-        if (auth()->guard('api')->check())
-        {
-            $user = auth()->guard('api')->user();
-        }
-
         // Paginate check: is the user a guest, has the user verified their email, and is the user not suspended?
         if ($user && $user->hasVerifiedEmail() && !$user->hasRole('suspended'))
         {
@@ -68,7 +62,13 @@ class Bookmark extends Model
     public function detachTag(Tag $tag)
     {
         $this->tags()->detach([$tag->id]);
-        // Manually sync updated_at of tag to current time
-        $tag->touch();
+
+        if ($tag->bookmarks()->count() > 0) {
+            // If there are still bookmarks associated with the tag then just change the updated_at to the current tag
+            $tag->touch();
+        } else {
+            // Otherwise delete the tag
+            $tag->delete();
+        }
     }
 }

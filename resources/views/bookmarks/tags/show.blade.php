@@ -1,18 +1,32 @@
 @extends('layouts.app')
 
+@section('breadcrumbs')
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('tags.index') }}">Tags</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ $tag->name }}</li>
+    </ol>
+</nav>
+@endsection
+
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col text-center">
-            <h1>Tags</h1>
-        </div>
-    </div>
-    <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">{{ $tag->name }}</h5>
-                    <h6 class="card-subtitle">Websites</h5>
+                <div class="card-header row no-gutters">
+                    <div class="col">
+                        <h5 class="card-title">{{ $tag->name }}</h5>
+                        <h6 class="card-subtitle">Websites</h5>
+                    </div>
+                    @can('delete', $tag)
+                    <form action="{{ route('tags.destroy', $tag) }}" method="post" class="col-auto">
+                        @method('delete')
+                        @csrf
+                        <button class="btn btn-danger">Delete Tag</a>
+                    </form>
+                    @endcan
                 </div>
                 <ul class="list-group list-group-flush">
                     @foreach ($bookmarks as $aBookmark)
@@ -30,9 +44,11 @@
                             @auth
                                 @if(auth()->user()->id === $aBookmark->user_id
                                     || auth()->user()->hasPermissionTo('access all tags'))
-                                <div class="col-auto">
-                                    <button disabled="disabled" class="btn btn-danger">Remove</button>
-                                </div>
+                                    <form action="{{ route('bookmarks.tag.detach', ['bookmark' => $aBookmark, 'tag' => $tag]) }}" method="post" class="col-auto">
+                                        @method("delete")
+                                        @csrf
+                                        <button class="btn btn-danger">Remove</button>
+                                    </form>
                                 @endif
                             @endauth
                         </div>

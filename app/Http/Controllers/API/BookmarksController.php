@@ -37,9 +37,15 @@ class BookmarksController extends Controller
             $user = auth()->guard('api')->user();
         }
 
-        $bookmarks = Bookmark::getFilteredBookmarks($user);
+        $bookmarks = Bookmark::getFilteredBookmarks($user)->toArray();
 
-        return response()->json(["success" => $bookmarks], 200);
+        // Keep consistency between paginated bookmark data and normal bookmark data
+        if (!array_key_exists('data', $bookmarks)) {
+            $data = $bookmarks;
+            $bookmarks = [];
+            $bookmarks['data'] = $data;
+        }
+        return response()->json($bookmarks, 200);
     }
 
     /**
@@ -133,7 +139,33 @@ class BookmarksController extends Controller
 
         return response()->json([
             'success' => false,
-            'message' => 'Bookmark could not be deleted'
+            'message' => 'Bookmark could not be deleted',
         ], 500);
+    }
+
+    /**
+     *
+     *
+     * @param App\Bookmark $bookmark
+     * @param string $tag_name
+     * @return \Illuminate\Http\Response
+     */
+    public function attachTag(Bookmark $bookmark)
+    {
+
+
+    }
+
+    /**
+     *
+     *
+     * @param App\Bookmark $bookmark
+     * @param App\Tag $tag
+     * @return \Illuminate\Http\Response
+     */
+    public function detachTag(Bookmark $bookmark, Tag $tag_name)
+    {
+
+
     }
 }
