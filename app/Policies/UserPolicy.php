@@ -17,7 +17,7 @@ class UserPolicy
      */
     public function create(User $user)
     {
-        return $user->hasAllPermissions('access all accounts', 'add users');
+        return $user->hasAnyPermission('access all accounts', 'access all users') && $user->hasPermissionTo('add users');
     }
 
     /**

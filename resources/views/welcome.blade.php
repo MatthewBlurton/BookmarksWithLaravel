@@ -66,6 +66,17 @@
                 </div>
             </a>
         </div>
+
+        @if($user->can('create', App\User::class))
+        <div class="col pt-2">
+            <a class="card text-center welcome-card" href="{{ route('users.create') }}">
+                <p class="display-1 pt-4"><i class="fa fa-plus-circle" aria-hidden="true"></p></i>
+                <div class="card-body">
+                    <h5 class="h2">Create new Account</h5>
+                </div>
+            </a>
+        </div>
+        @endcan
         @endauth
     </div>
 </div>
