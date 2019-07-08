@@ -27,6 +27,8 @@ class PassportController extends Controller
     {
         $user;
         $data = [];
+        $message = 'Your account has been created! To verify your account check your email.';
+        $statusCode = 200;
         // Attempt to validate the request
         try {
             $data = $this->validate($request, User::rules());
@@ -35,20 +37,27 @@ class PassportController extends Controller
             return response()->json($e->errors(), 400);
         }
 
+        // Attempt to create the user account
         try {
             $user = User::createWithProfile($data);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
 
-        $user->sendApiEmailVerificationNotification();
+        // Attempt to send an email for the user to verify their email
+        try {
+            $user->sendApiEmailVerificationNotification();
+        } catch (\Exception $e) {
+            $message = 'Your account has been created! However we are unable to send an email verification to you. You will have to manually request a new verification email later.';
+            $statusCode = 500;
+        }
 
         // Create a token for the api to use for authentication
         $token = $user->createToken('CrossLinkToken')->accessToken;
 
         // Show the token from the api for later use in authentication
         return response()->json(['token' => $token,
-            'message' => 'Your account has been created! To verify your account check your email.'], 201);
+            'message' => $message], $statusCode);
     }
 
     /**

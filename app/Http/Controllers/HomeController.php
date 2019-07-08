@@ -13,7 +13,8 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        // There is a home screen for guest
+        // $this->middleware('auth');
     }
 
     /**

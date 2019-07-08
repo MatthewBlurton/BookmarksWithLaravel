@@ -26,6 +26,10 @@ Route::name('api.')->group(function() {
         Route::get('logout', 'API\Auth\PassportController@logout')->name('logout');
     });
 
+    // Verification Routes
+    Route::match(['get', 'head'], 'email/verify/{id}', 'API\Auth\VerificationController@verify')->name('verification.verify');
+    Route::match(['get', 'head'], 'email/resend', 'API\Auth\VerificationController@resend')->name('verification.resend');
+
     Route::apiResource('bookmarks', 'API\BookmarksController');
     Route::match(['put', 'patch'], 'bookmarks/{bookmark}/tag/attach', 'API\BookmarksController@attachTag')->name('bookmarks.tag.attach');
     Route::delete('bookmarks/{bookmark}/{tag}', 'API\BookmarksController@detachTag')->name('bookmarks.tag.detach');
@@ -36,8 +40,4 @@ Route::name('api.')->group(function() {
         Route::match(['get', 'head'], 'tags/{tag}', 'API\TagsController@show')->name('show');
         Route::delete('tags/{tag}', 'Api\TagsController@destroy')->name('destroy');
     });
-
-    // Verification Routes
-    Route::get('email/verify/{id}','API\Auth\VerificationController@verify')->name('verification.verify');
-    Route::get('email/resend/{id}', 'API\Auth\VerificationController@resend')->name('verification.resend');
 });

@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers\API\Auth;
 
-use App\User;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\VerifiesEmails;
-use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Verified;
+
+use App\User;
 
 class VerificationController extends Controller
 {
     use VerifiesEmails;
+    public function __construct()
+    {
+        $this->middleware('auth:api')->only('resend');
+        $this->middleware('throttle:6,1');
+    }
 
     public function verify(Request $request)
     {
@@ -28,25 +34,30 @@ class VerificationController extends Controller
 
         $user->save();
 
-        return response()->json(['verified' => true], 200);
+        return response()->json(['verified' => true,
+            'message' => 'Your account is now verified'], 200);
     }
 
+    /**
+     * Resend an email verification to the user
+     *
+     * @param \Illuminate\Http\Request $request
+     */
     public function resend(Request $request)
     {
-        $userID = $request['id'];
-        try {
-            $user = User::findOrFail($userID);
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $mnfe) {
-            return response()->json(['resent' => false,
-                'message' => $mnfe->getMessage(),], 400);
-        }
+        $user = auth()->user();
 
         if ($user->hasVerifiedEmail()) {
             return response()->json(['resent' => false,
-                'message' => 'User has already verified their email',], 422);
+                'message' => 'User has already verified their email',], 409);
         }
 
-        $user->sendEmailVerificationNotification();
+        try {
+            $user->sendApiEmailVerificationNotification();
+        } catch (\Exception $e) {
+            return response()->json(['resent' => false,
+                'message' => $e->getMessage()], 500);
+        }
         return response()->json(['resent' => true], 200);
     }
 }
