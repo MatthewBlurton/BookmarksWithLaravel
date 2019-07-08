@@ -17,23 +17,28 @@ class RolesAndPermissionsSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // User privelages
-        Permission::create(['name' => 'browse users']);
-        Permission::create(['name' => 'read users']);
+        // Permission::create(['name' => 'browse users']);
+        // Permission::create(['name' => 'read users']);
         Permission::create(['name' => 'edit users']);
         Permission::create(['name' => 'add users']);
-        Permission::create(['name' => 'delete users']);
-        Permission::create(['name' => 'search users']);
+        // Permission::create(['name' => 'delete users']);
+        // Permission::create(['name' => 'search users']);
 
         // Bookmark privelages
-        Permission::create(['name' => 'browse bookmarks']);
-        Permission::create(['name' => 'read bookmarks']);
+        // Permission::create(['name' => 'browse bookmarks']);
+        // Permission::create(['name' => 'read bookmarks']);
         Permission::create(['name' => 'edit bookmarks']);
         Permission::create(['name' => 'add bookmarks']);
         Permission::create(['name' => 'delete bookmarks']);
-        Permission::create(['name' => 'search bookmarks']);
+        // Permission::create(['name' => 'search bookmarks']);
 
         // Tag privelages
+        // Permission::create(['name' => 'browse tag']);
+        // Permission::create(['name' => 'read tag']);
+        // Permission::create(['name' => 'read tag']);
+        // Permission::create(['name' => 'add tag']);
         Permission::create(['name' => 'delete tag']);
+        // Permission::create(['name' => 'search tag']);
 
         // Profile privelages
         Permission::create(['name' => 'browse profiles']);
@@ -41,7 +46,7 @@ class RolesAndPermissionsSeeder extends Seeder
         Permission::create(['name' => 'edit profiles']);
         Permission::create(['name' => 'add profiles']);
         Permission::create(['name' => 'delete profiles']);
-        Permission::create(['name' => 'search profiles']);
+        // Permission::create(['name' => 'search profiles']);
 
         // Role assignment privelages
         Permission::create(['name' => 'suspend user']);
@@ -57,7 +62,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Bundle permissions together
         // Users
-        $usersEdBundle = ['edit users', 'delete users'];
+        $usersEaBundle = ['edit users', 'add users'];
 
         // Bookmarks
         $bookmarksEadBundle = [
@@ -66,13 +71,13 @@ class RolesAndPermissionsSeeder extends Seeder
             'delete bookmarks'
         ];
 
-        $profilesBreadsBundle = [
+        $profilesBreadBundle = [
             'browse profiles',
             'read profiles',
             'edit profiles',
             'add profiles',
             'delete profiles',
-            'search profiles'
+            // 'search profiles'
         ];
 
 
@@ -80,11 +85,11 @@ class RolesAndPermissionsSeeder extends Seeder
         Role::create(['name' => 'suspended']);
         Role::create(['name' => 'user'])
             ->givePermissionTo($bookmarksEadBundle)
-            ->givePermissionTo($profilesBreadsBundle)
+            ->givePermissionTo($profilesBreadBundle)
             ->givePermissionTo('edit users');
         Role::create(['name' => 'user-admin'])
-            ->givePermissionTo($usersEdBundle)
-            ->givePermissionTo($profilesBreadsBundle)
+            ->givePermissionTo('edit users')
+            ->givePermissionTo($profilesBreadBundle)
             ->givePermissionTo([
                 'access all ordinary users',
                 'access all profiles',
@@ -92,10 +97,10 @@ class RolesAndPermissionsSeeder extends Seeder
                 'assign role',
             ]);
         Role::create(['name' => 'admin'])
-            ->givePermissionTo($usersEdBundle)
+            ->givePermissionTo($usersEaBundle)
             ->givePermissionTo($bookmarksEadBundle)
             ->givePermissionTo('delete tag')
-            ->givePermissionTo($profilesBreadsBundle)
+            ->givePermissionTo($profilesBreadBundle)
             ->givePermissionTo([
                 'access all users',
                 'access all tags',
@@ -105,10 +110,10 @@ class RolesAndPermissionsSeeder extends Seeder
                 'assign role',
             ]);
         Role::create(['name' => 'root'])
-            ->givePermissionTo($usersEdBundle)
+            ->givePermissionTo($usersEaBundle)
             ->givePermissionTo($bookmarksEadBundle)
             ->givePermissionTo('delete tag')
-            ->givePermissionTo($profilesBreadsBundle)
+            ->givePermissionTo($profilesBreadBundle)
             ->givePermissionTo([
                 'access all accounts',
                 'access all tags',

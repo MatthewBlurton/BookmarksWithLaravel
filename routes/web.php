@@ -24,14 +24,16 @@ Route::match(['put', 'patch'], 'bookmarks/{bookmark}/tag/attach', 'BookmarksCont
 Route::delete('bookmarks/{bookmark}/tag/{tag}/detach', 'BookmarksController@detachTag')->name('bookmarks.tag.detach');
 
 // Route for users
-Route::match(['get', 'head'], 'users', 'UsersController@index')->name("users.index");
+Route::resource('users', 'UsersController')->except('destroy');
 Route::delete('users/{user}', 'UsersController@suspend')->name('users.suspend');
-Route::match(['put', 'patch'], 'users/{user}', 'UsersController@update')->name('users.update');
-Route::match(['put', 'patch'], 'users/{user}/profile', 'UsersController@updateProfile')->name('profiles.update');
-Route::match(['put', 'patch'], 'users/{user}/elevate', 'UsersController@updateElevated')->name('users.update.elevate');
-Route::match(['put', 'patch'], 'users/{user}/role', 'UsersController@assignRole')->name('users.update.role');
-Route::match(['get', 'head'], 'users/{user}', 'UsersController@show')->name('users.show');
-Route::match(['get', 'head'], 'users/{user}/edit', 'UsersController@edit')->name('users.edit');
+// Route::match(['get', 'head'], 'users', 'UsersController@index')->name("users.index");
+// Route::delete('users/{user}', 'UsersController@suspend')->name('users.suspend');
+// Route::match(['put', 'patch'], 'users/{user}', 'UsersController@update')->name('users.update');
+// Route::match(['put', 'patch'], 'users/{user}/profile', 'UsersController@updateProfile')->name('profiles.update');
+// Route::match(['put', 'patch'], 'users/{user}/elevate', 'UsersController@updateElevated')->name('users.update.elevate');
+// Route::match(['put', 'patch'], 'users/{user}/role', 'UsersController@assignRole')->name('users.update.role');
+// Route::match(['get', 'head'], 'users/{user}', 'UsersController@show')->name('users.show');
+// Route::match(['get', 'head'], 'users/{user}/edit', 'UsersController@edit')->name('users.edit');
 
 // Route for assigning and removing tags
 Route::match(['get', 'head'], 'tags', 'TagsController@index')->name('tags.index');

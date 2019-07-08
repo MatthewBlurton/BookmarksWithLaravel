@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\Controller;
 
 use App\User;
@@ -14,9 +15,9 @@ class BookmarksController extends Controller
     {
         // Authorization middleware (if the user does not have appropriate permissions, do a not currently logged in error)
         $this->middleware('auth:api')->except(['index', 'show']);
-        $this->middleware('can:update,bookmark')->only('update');
+        // $this->middleware('can:update,bookmark')->only('update');
         $this->middleware('can:view,bookmark')->only('view');
-        $this->middleware('can:create,App\Bookmark')->only('store');
+        // $this->middleware('can:create,\App\Bookmark')->only('store');
         $this->middleware('can:delete,bookmark')->only('destroy');
     }
 
@@ -96,6 +97,16 @@ class BookmarksController extends Controller
      */
     public function update(Request $request, Bookmark $bookmark)
     {
+        try {
+            $request->validate([
+                'title' => ['required', 'min:3'],
+                'url' => ['required', 'url'],
+                'description' => ['min:3'],
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json($e->errors(), 400);
+        }
+
         if (!$bookmark) {
             return response()->json([
                 'success' => 'false',
@@ -122,7 +133,7 @@ class BookmarksController extends Controller
      * @param  App\Bookmark  $bookmark
      * @return \Illuminate\Http\Response
      */
-    public function destroy(?Bookmark $id)
+    public function destroy(Bookmark $bookmark)
     {
         if (!$bookmark) {
             return response()->json([
@@ -144,28 +155,34 @@ class BookmarksController extends Controller
     }
 
     /**
+     * Attaches a new tag to the selected bookmark
      *
-     *
+     * @param Illuminate\Http\Request $request
      * @param App\Bookmark $bookmark
-     * @param string $tag_name
      * @return \Illuminate\Http\Response
      */
-    public function attachTag(Bookmark $bookmark)
+    public function attachTag(Request $request, Bookmark $bookmark)
     {
+        try {
+            $request->validate(['name' => 'required|min:3']);
+        } catch (ValidationException $e) {
+            return response()->json(['attached' => false, 'errors' => $e->errors()], 400);
+        }
 
-
+        $bookmark->attachTag($request->name);
+        return response()->json(['attached' => true], 200);
     }
 
     /**
-     *
+     * Detaches a tag from the selected bookmark
      *
      * @param App\Bookmark $bookmark
      * @param App\Tag $tag
      * @return \Illuminate\Http\Response
      */
-    public function detachTag(Bookmark $bookmark, Tag $tag_name)
+    public function detachTag(Bookmark $bookmark, Tag $tag)
     {
-
-
+        $bookmark->detachTag($tag);
+        return response()->json(['detached' => true], 200);
     }
 }

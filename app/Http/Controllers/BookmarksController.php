@@ -112,13 +112,14 @@ class BookmarksController extends Controller
      * Used to attach a tag to a bookmark
      * Requires a tag name in the request
      *
-     * @param App\Bookmark $bookmark
+     * @param \Illuminate\Http\Request
+     * @param \App\Bookmark $bookmark
      * @return \Illuminate\Http\Response
      */
-    public function attachTag(Bookmark $bookmark)
+    public function attachTag(Request $request, Bookmark $bookmark)
     {
-        $attributes = request()->validate([
-            'name' => 'min:3',
+        $attributes = $request->validate([
+            'name' => 'required|min:3',
         ]);
 
         $bookmark->attachTag($attributes['name']);

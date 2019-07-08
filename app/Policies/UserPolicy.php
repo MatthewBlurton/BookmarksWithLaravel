@@ -10,6 +10,17 @@ class UserPolicy
     use HandlesAuthorization;
 
     /**
+     * Determine whether the user can create other users.
+     *
+     * @param  \App\User  $user
+     * @return bool
+     */
+    public function create(User $user)
+    {
+        return $user->hasAllPermissions('access all accounts', 'add users');
+    }
+
+    /**
      * Determine whether the user can update the user model.
      *
      * @param  \App\User  $user

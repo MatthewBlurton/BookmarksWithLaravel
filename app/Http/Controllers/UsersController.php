@@ -14,7 +14,7 @@ class UsersController extends Controller
         // Authorization middleware (if the user does not have appropriate permissions, do a not currently logged in error)
         $this->middleware('auth')->except(['index', 'show']);
         $this->middleware(['permission:edit users', 'verified'])->only(['edit', 'update']);
-        $this->middleware(['permission:add users'])->only(['create', 'store']);
+        // $this->middleware(['can,create:App\User'])->only(['create', 'store']);
         $this->middleware(['permission:suspend user'])->only('suspend');
     }
 
@@ -35,6 +35,22 @@ class UsersController extends Controller
         );
     }
 
+    /**
+     *
+     */
+    public function create()
+    {
+        return view('users/create');
+    }
+
+    /**
+     * Store a new user
+     */
+    public function store(Response $response)
+    {
+        $response->validate(User::rules());
+    }
+
     // View a specific user
     public function show(User $user)
     {
@@ -52,7 +68,7 @@ class UsersController extends Controller
     public function update(User $user)
     {
         $this->authorize('update', $user);
-        
+
         $attributes = request()->validate([
             'old-password' => 'required',
             'password' => 'required:old-password|string|min:8|confirmed',
@@ -95,7 +111,7 @@ class UsersController extends Controller
 
         $user->profile->update($attributes);
 
-        if (!is_null($avatarName)) 
+        if (!is_null($avatarName))
         {
             request()->avatar->storeAs('avatars', $avatarName);
             $user->profile->avatar = '/storage/avatars/' . $avatarName;
@@ -125,7 +141,7 @@ class UsersController extends Controller
                 return redirect()->back()->withErrors(['email' => trans($response)]);
         }
 
-        
+
 
         return redirect()->back()->with('success', 'A password reset notification has been sent to the user');
     }

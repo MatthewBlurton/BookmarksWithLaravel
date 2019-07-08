@@ -19,7 +19,7 @@
             @endcomponent
         </div>
     </div>
-    <form method="POST" action="/bookmarks">
+    <form method="POST" action="{{ route('bookmarks.store') }}">
         @csrf
         <div class="form-group row">
             <label for="bookmark-title" class="col-sm-2 col-form-label">Title</label>
