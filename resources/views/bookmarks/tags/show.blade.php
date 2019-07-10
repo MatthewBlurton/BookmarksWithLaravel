@@ -14,7 +14,64 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card">
+                <div class="card">
+                        <div class="card-header row no-gutters">
+                                <div class="col">
+                                    <h5 class="card-title">{{ $tag->name }}</h5>
+                                    <h6 class="card-subtitle">Websites</h5>
+                                </div>
+                                @can('delete', $tag)
+                                <form action="{{ route('tags.destroy', $tag) }}" method="post" class="col-auto">
+                                    @method('delete')
+                                    @csrf
+                                    <button class="btn btn-danger">Delete Tag</a>
+                                </form>
+                                @endcan
+                            </div>
+                    <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        @foreach ($bookmarks as $aBookmark)
+                        <li class="list-group-item">
+                            <div class="row no-gutters">
+                                <div class="col">
+                                    <h5 class="card-title">
+                                        <a href="{{ route('bookmarks.show', $aBookmark) }}"
+                                            class="card-link">{{ $aBookmark->title }}</a>
+                                    </h5>
+                                    <a href="{{ $aBookmark->url }}">{{ $aBookmark->url }}</a>
+                                    <p>{{ $aBookmark->description }}</p>
+                                </div>
+                                <div class="col-auto mx-4 my-auto">
+                                    <strong>
+                                        <i class="fa @if($aBookmark->is_public){{__('fa-eye')}}@else{{__('fa-eye-slash')}}@endif" aria-hidden="true"></i>
+                                    </strong>
+                                </div>
+                                @auth
+                                @if(auth()->user()->id === $aBookmark->user_id
+                                    || auth()->user()->hasPermissionTo('access all tags'))
+                                    <form action="{{ route('bookmarks.tag.detach', ['bookmark' => $aBookmark, 'tag' => $tag]) }}" method="post" class="col-auto my-auto">
+                                        @method("delete")
+                                        @csrf
+                                        <button class="btn btn-danger">Remove</button>
+                                    </form>
+                                @endif
+                                @endauth
+                            </div>
+                        </li>
+                        @endforeach
+                        @if($bookmarks instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                        <li class="list-group-item">
+                            <div class="row no-gutters justify-content-center">
+                                <div class="col-auto justify-content-center">
+                                    {{ $bookmarks->links() }}
+                                </div>
+                            </div>
+                        </li>
+                        @endif
+                    </ul>
+                </div>
+            </div>
+            {{-- <div class="card">
                 <div class="card-header row no-gutters">
                     <div class="col">
                         <h5 class="card-title">{{ $tag->name }}</h5>
@@ -60,9 +117,8 @@
                     {{ $bookmarks->links() }}
                 </div>
                 @endif
-            </div>
+            </div> --}}
         </div>
     </div>
-</div>
 </div>
 @endsection

@@ -25,7 +25,7 @@ class TagsController extends Controller
     public function show(Tag $tag)
     {
         // If the user is logged in and the email is verified, and the bookmark is public, show each bookmark associated with this tag
-        $bookmarks = $tag->getAssociatedFilteredBookmarks();
+        $bookmarks = $tag->getAssociatedFilteredBookmarks(auth()->user());
         return view("bookmarks.tags.show", compact('tag', 'bookmarks'));
     }
 
