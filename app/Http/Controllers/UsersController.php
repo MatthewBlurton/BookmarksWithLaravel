@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 use App\User;
+use App\Bookmark;
 
 class UsersController extends Controller
 {
@@ -58,7 +59,9 @@ class UsersController extends Controller
     // View a specific user
     public function show(User $user)
     {
-        return view('users.show', compact('user'));
+        $loggedIn = auth()->check() ? auth()->user() : null;
+        $bookmarks = $user->bookmarksFiltered($loggedIn);
+        return view('users.show', compact('user'), compact('bookmarks'));
     }
 
     // Modifies the user

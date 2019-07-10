@@ -39,28 +39,33 @@ class UserPolicy
      * @param  \App\User  $target
      * @return bool
      */
-    public function update(User $user, User $target)
+    public function update(?User $user, User $target)
     {
-        return $user->id === $target->id
-            || $this->checkPermissions($user, $target, 'edit users');
+        return $user && ($user->id === $target->id
+            || $this->checkPermissions($user, $target, 'edit users'));
     }
 
     /**
      * Determine whether the user can view sensitive information relating to a target account.
      * Sensitive information includes: Emails, First Name, and Last Name
      *
-     * @param \App\User $user
+     * @param \App\User $user (optional)
      * @param \App\User $target
      * @return boolean
      */
-    public function viewSensitive(User $user, User $target)
+    public function viewSensitive(?User $user, User $target)
     {
-        // If the user is not suspended, and has permission to read profiles, or the target is the user then the user is allowed to view sensetive information
-        if (!$user->hasRole('suspended') && $this->checkPermissions($user, $target, 'read profiles')) {
-            return true;
-        } else if ($user->id === $target->id) {
-            return true;
+        // Check if the user is a guest
+        if ($user) {
+            // If the user is not suspended, and has permission to read profiles, or the target is the user then the user is allowed to view sensetive information
+            if (!$user->hasRole('suspended') && $this->checkPermissions($user, $target, 'read profiles')) {
+                return true;
+            } else if ($user->id === $target->id) {
+                return true;
+            }
         }
+
+        // if all previous conditions are not met, then return false
         return false;
     }
 

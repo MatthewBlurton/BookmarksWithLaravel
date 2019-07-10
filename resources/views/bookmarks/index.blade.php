@@ -42,6 +42,10 @@
                                     <a href="{{ $aBookmark->url }}">{{ $aBookmark->url }}</a>
                                     <p>{{ $aBookmark->description }}</p>
                                 </div>
+                                <div class="col-auto ml-4 text-center my-auto">
+                                    <h5 class="card-title">Owner</h5>
+                                    <a href="{{ route('users.show', $aBookmark->user) }}">{{ $aBookmark->user->name }}</a>
+                                </div>
                                 <div class="col-auto mx-4 my-auto">
                                     <strong>
                                         <i class="fa @if($aBookmark->is_public){{__('fa-eye')}}@else{{__('fa-eye-slash')}}@endif" aria-hidden="true"></i>

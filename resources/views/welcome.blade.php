@@ -25,9 +25,7 @@
             @endauth
         </div>
     </div>
-
     @include('partials.notverified')
-
     <div class="row">
         <div class="col-sm-6 pt-2">
             <a class="card text-black text-center welcome-card" href="{{ route('bookmarks.index') }}">
