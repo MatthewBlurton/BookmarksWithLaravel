@@ -15,7 +15,7 @@
     <div class="row">
         <div class="col">
             @component('components.errors')
-            <strong>Whoops!</strong> Could not create a new bookmark for the following reasons.
+            Could not create a new bookmark for the following reasons.
             @endcomponent
         </div>
     </div>

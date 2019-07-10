@@ -24,9 +24,9 @@ class Tag extends Model
     public static function getFilteredTags(?User $user)
     {
         if ($user && $user->hasVerifiedEmail() && !$user->hasRole('suspended')) {
-            return Tag::orderBy('updated_at', 'DESC')->paginate(30);
-        } else {// Otherwise only show 30 of the most popular
-            return Tag::orderBy('updated_at', 'DESC')->take(30)->get();
+            return Tag::orderBy('updated_at', 'DESC')->paginate(5);
+        } else {// Otherwise only show 5 of the most popular
+            return Tag::orderBy('updated_at', 'DESC')->take(5)->get();
         }
     }
 
@@ -43,12 +43,12 @@ class Tag extends Model
         // If the user is logged in and the email is verified, and the bookmark is public, show each bookmark associated with this tag
         if ($user && !$user->hasRole('suspended') && $user->hasVerifiedEmail()) {
             return $user->hasPermissionTo('access all bookmarks')
-                ? $this->bookmarks()->orderBy('updated_at', 'DESC')->paginate(7)
+                ? $this->bookmarks()->orderBy('updated_at', 'DESC')->paginate(5)
                 : $this->bookmarks()->where('user_id', auth()->id())->orWhere('is_public', true)
-                    ->orderBy('updated_at', 'DESC')->paginate(7);
-        } else {// Otherwise only show 30 of the most popular
+                    ->orderBy('updated_at', 'DESC')->paginate(5);
+        } else {// Otherwise only show 5 of the most popular
             return $this->bookmarks()->where('is_public', true)->orderBy('updated_at', 'DESC')
-                        ->take(8)->get();
+                        ->take(5)->get();
         }
     }
 }

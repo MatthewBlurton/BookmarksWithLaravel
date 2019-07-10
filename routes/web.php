@@ -26,6 +26,9 @@ Route::delete('bookmarks/{bookmark}/tag/{tag}/detach', 'BookmarksController@deta
 // Route for users
 Route::resource('users', 'UsersController')->except('destroy');
 Route::delete('users/{user}', 'UsersController@suspend')->name('users.suspend');
+Route::match(['get', 'head'], 'password/change', 'UsersController@showChangePasswordForm')->name('password.change.request');
+Route::match(['put', 'patch'], 'password/change', 'UsersController@changePassword')->name('password.change');
+Route::match(['put', 'patch'], 'users/{user}/role', 'UsersController@assignRole')->name('users.role.assign');
 // Route::match(['get', 'head'], 'users', 'UsersController@index')->name("users.index");
 // Route::delete('users/{user}', 'UsersController@suspend')->name('users.suspend');
 // Route::match(['put', 'patch'], 'users/{user}', 'UsersController@update')->name('users.update');

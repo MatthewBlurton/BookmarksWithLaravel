@@ -11,7 +11,9 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <!-- Left Side Of Navbar -->
             <ul class="navbar-nav mr-auto">
-
+                <li class="nav-item"><a href="{{ route('bookmarks.index') }}" class="nav-link">Bookmarks</a></li>
+                <li class="nav-item"><a href="{{ route('tags.index') }}" class="nav-link">Tags</a></li>
+                <li class="nav-item"><a href="{{ route('users.index') }}" class="nav-link">Users</a></li>
             </ul>
 
             <!-- Right Side Of Navbar -->
@@ -43,14 +45,14 @@
                                 @csrf
                         </form>
                         <div class="dropdown-divider"></div>
-                        
+
                         <a href="/users/{{ Auth::user()->id }}" class="dropdown-item">My account</a>
                         <a href="/users/{{ Auth::user()->id }}/edit" class="dropdown-item">Change my account</a>
                         <a href="/users" class="dropdown-item">All users</a>
                         <div class="dropdown-divider"></div>
 
                         <a href="/bookmarks" class="dropdown-item">All Bookmarks</a>
-                        
+
                     </div>
                 </li>
                 @endguest

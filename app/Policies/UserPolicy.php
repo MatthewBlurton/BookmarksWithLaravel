@@ -10,6 +10,18 @@ class UserPolicy
     use HandlesAuthorization;
 
     /**
+     * Check if the authenticated user is the current user.
+     *
+     * @param \App\User $user
+     * @param \App\User $target
+     * @return bool
+     */
+    public function authIsUser(User $user, User $target)
+    {
+        return $user->id === $target->id;
+    }
+
+    /**
      * Determine whether the user can create other users.
      *
      * @param  \App\User  $user
@@ -24,13 +36,32 @@ class UserPolicy
      * Determine whether the user can update the user model.
      *
      * @param  \App\User  $user
-     * @param  \App\User  $model
-     * @return mixed
+     * @param  \App\User  $target
+     * @return bool
      */
     public function update(User $user, User $target)
     {
         return $user->id === $target->id
             || $this->checkPermissions($user, $target, 'edit users');
+    }
+
+    /**
+     * Determine whether the user can view sensitive information relating to a target account.
+     * Sensitive information includes: Emails, First Name, and Last Name
+     *
+     * @param \App\User $user
+     * @param \App\User $target
+     * @return boolean
+     */
+    public function viewSensitive(User $user, User $target)
+    {
+        // If the user is not suspended, and has permission to read profiles, or the target is the user then the user is allowed to view sensetive information
+        if (!$user->hasRole('suspended') && $this->checkPermissions($user, $target, 'read profiles')) {
+            return true;
+        } else if ($user->id === $target->id) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -47,15 +78,18 @@ class UserPolicy
     }
 
     /**
-     * Determine whether the user can do elevated to the user model.
-     *
+     * Determine whether the user can do elevated changes to the user model.
+     * This includes:
+     * Changing the user's password without needing to know the old user password
+     * Changing the user's username
+     * Changing the user's email address
      * @param  \App\User  $user
      * @param  \App\User  $model
      * @return mixed
      */
     public function updateElevate(User $user, User $target)
     {
-        return $user->id !== $target->id && $this->checkPermissions($user, $target, 'assign role');
+        return $user->id !== $target->id && $this->checkPermissions($user, $target, 'edit users');
     }
 
     /**
@@ -98,7 +132,7 @@ class UserPolicy
         }// Ensure admins can't change other admins
         else if ($user->hasAllPermissions($action, 'access all users'))
         {
-            return !$target->hasAnyPermission('access all users', 'access all accounts');
+            return !$target->hasAnyPermission('access all accounts', 'access all users');
         }
         // return true if the user has permission to access all accounts
         return $user->hasAllPermissions($action, 'access all accounts');

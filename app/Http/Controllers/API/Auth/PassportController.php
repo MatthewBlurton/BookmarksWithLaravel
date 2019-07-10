@@ -38,11 +38,7 @@ class PassportController extends Controller
         }
 
         // Attempt to create the user account
-        try {
-            $user = User::createWithProfile($data);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
-        }
+        $user = User::createWithProfile($data);
 
         // Attempt to send an email for the user to verify their email
         try {

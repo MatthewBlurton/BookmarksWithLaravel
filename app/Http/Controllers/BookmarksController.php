@@ -53,12 +53,17 @@ class BookmarksController extends Controller
             'description' => ['min:3'],
         ]);
 
-        // Create a new bookmark with the attributes and the currently logged in user id. Then redirect to show details of the newly created bookmark
-        $attributes["user_id"] = auth()->id();
-        $bookmark = Bookmark::create($attributes);
+        $bookmark = new Bookmark;
 
-        // Apply is_public boolean to the newly created bookmark and save it
+        // Fill out the bookmark with the appropriate data
+        // Assign the bookmark user to the currently logged in user, and
+        // Assign the is_public of the bookmark to true if the request has an is_public field
+        // then save it
+        $bookmark->fill($attributes);
+        $bookmark->user_id = auth()->user()->id;
+
         $bookmark->is_public = $request->has('is_public');
+        $bookmark->save();
         return redirect(route('bookmarks.show', $bookmark));
     }
 

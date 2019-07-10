@@ -13,13 +13,19 @@ class BookmarkPolicy
     /**
      * Determine whether the user can view the bookmark.
      * They can view the bookmark if the user ha
-     * @param  \App\User  $user
+     * @param  \App\User $user
      * @param  \App\Bookmark  $bookmark
      * @return mixed
      */
-    public function view(User $user, Bookmark $bookmark)
+    public function view(?User $user, Bookmark $bookmark)
     {
-        return $user->hasPermissionTo('access all bookmarks') || $user->id === $bookmark->user_id || $bookmark->is_public;
+        // Check if the user is authenticated, and not suspended
+        if (isset($user) && !$user->hasRole('suspended') && $user->hasVerifiedEmail()) {
+            return $user->hasPermissionTo('access all bookmarks') || $user->id === $bookmark->user_id || $bookmark->is_public;
+        } else {
+            // Guest or suspended can only see public bookmarks
+            return $bookmark->is_public;
+        }
     }
 
      /**

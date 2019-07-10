@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 
 use App\User;
 use App\Bookmark;
+use App\Tag;
 
 class BookmarksController extends Controller
 {
@@ -63,18 +64,18 @@ class BookmarksController extends Controller
             'description' => ['min:3'],
         ]);
 
-        $attributes['user_id'] = auth()->id();
-
-        if ($bookmark = Bookmark::create($attributes)) {
-            return response()->json([
-                'success' => true,
-                'data' => $bookmark->toArray(),
-            ], 201);
+        $bookmark = new Bookmark();
+        $bookmark->fill($attributes);
+        $bookmark->user_id = auth()->user()->id;
+        if ($request->has('is_puclic')) {
+            $bookmark->is_public = true;
         }
+        $bookmark->save();
+
         return response()->json([
-            'success' => false,
-            'message' => 'User is not authorized to add a bookmark',
-        ], 401);
+            'success' => true,
+            'data' => $bookmark->toArray(),
+        ], 201);
     }
 
     /**
@@ -99,9 +100,9 @@ class BookmarksController extends Controller
     {
         try {
             $request->validate([
-                'title' => ['required', 'min:3'],
-                'url' => ['required', 'url'],
-                'description' => ['min:3'],
+                'title' => 'sometimes|required|min:3',
+                'url' => 'sometimes|required|url',
+                'description' => 'sometimes|required|min:3',
             ]);
         } catch (ValidationException $e) {
             return response()->json($e->errors(), 400);
@@ -114,7 +115,7 @@ class BookmarksController extends Controller
             ], 400);
         }
 
-        if ($bookmark->fill($request->all())->save()) {
+        if ($bookmark->update($request->all())) {
             return response()->json([
                 'success' => 'true',
                 'message' => 'bookmark successfully updated'
@@ -169,8 +170,9 @@ class BookmarksController extends Controller
             return response()->json(['attached' => false, 'errors' => $e->errors()], 400);
         }
 
-        $bookmark->attachTag($request->name);
-        return response()->json(['attached' => true], 200);
+        $tag = $bookmark->attachTag($request->name);
+        return response()->json(['attached' => true,
+                'data' => $tag], 200);
     }
 
     /**
@@ -182,6 +184,10 @@ class BookmarksController extends Controller
      */
     public function detachTag(Bookmark $bookmark, Tag $tag)
     {
+        if (!$bookmark->tags->find($tag)) {
+            return response()->json(['deatched' => false,
+                    'errors' => 'Tag selected is not currently associated with the bookmark'], 409);
+        }
         $bookmark->detachTag($tag);
         return response()->json(['detached' => true], 200);
     }

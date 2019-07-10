@@ -70,7 +70,7 @@
         @if($user->can('create', App\User::class))
         <div class="col pt-2">
             <a class="card text-center welcome-card" href="{{ route('users.create') }}">
-                <p class="display-1 pt-4"><i class="fa fa-plus-circle" aria-hidden="true"></p></i>
+                <p class="display-1 pt-4"><i class="fa fa-user-plus" aria-hidden="true"></i></p>
                 <div class="card-body">
                     <h5 class="h2">Create new Account</h5>
                 </div>

@@ -8,8 +8,8 @@ use App\Tag;
 
 class Bookmark extends Model
 {
-    protected $fillable = [
-        'title', 'url', 'description', 'is_public', 'user_id'
+    protected $guarded = [
+        'id', 'user_id'
     ];
 
     // protected $guarded = [];
@@ -39,23 +39,31 @@ class Bookmark extends Model
             // 1. The bookmark is owned by the currently logged in user
             // 2. The bookmark is set to public
             return $user->hasPermissionTo('access all bookmarks')
-                ? Bookmark::orderBy('updated_at', 'DESC')->paginate(10)
+                ? Bookmark::orderBy('updated_at', 'DESC')->paginate(5)
                 : Bookmark::where('user_id', $user->id)->orWhere('is_public', true)
-                    ->orderBy('updated_at', 'DESC')->paginate(10);
+                    ->orderBy('updated_at', 'DESC')->paginate(5);
         }
         else { // If the paginate check fails, only grab 10 of the latest PUBLIC bookmarks.
             return Bookmark::where('is_public', true)->orderBy('updated_at', 'DESC')
-                ->take(10)->get();
+                ->take(5)->get();
         }
     }
 
-    // Attach or create a new tag for this bookmark
-    public function attachTag($tagName)
+    /**
+     * Attaches a new or existing tag to this bookmark and returns the newly attached tag
+     *
+     * @param string $tagName
+     * @return \App\Tag
+     */
+    public function attachTag(string $tagName)
     {
         $tag = Tag::firstOrCreate(['name' => $tagName]);
         // Manually sync updated_at of tag to current time
         $tag->touch();
         $this->tags()->syncWithoutDetaching([$tag->id]);
+
+        // return the tag
+        return $tag;
     }
 
     // Detach an existing tag

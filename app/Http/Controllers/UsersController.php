@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 use App\User;
 
@@ -13,9 +14,9 @@ class UsersController extends Controller
     {
         // Authorization middleware (if the user does not have appropriate permissions, do a not currently logged in error)
         $this->middleware('auth')->except(['index', 'show']);
-        $this->middleware(['permission:edit users', 'verified'])->only(['edit', 'update']);
-        // $this->middleware(['can,create:App\User'])->only(['create', 'store']);
-        $this->middleware(['permission:suspend user'])->only('suspend');
+        $this->middleware(['verified', 'can:update,user'])->only(['edit', 'update']);
+        $this->middleware(['can:create,App\User'])->only(['create', 'store']);
+        $this->middleware(['can:suspend,user'])->only('suspend');
     }
 
     // Show all bookmarks
@@ -40,15 +41,18 @@ class UsersController extends Controller
      */
     public function create()
     {
-        return view('users/create');
+        return view('users.create');
     }
 
     /**
      * Store a new user
      */
-    public function store(Response $response)
+    public function store(Request $request)
     {
-        $response->validate(User::rules());
+        $request->validate(User::rules());
+        $user = User::createWithProfile($request->all());
+
+        Route::redirect('users.show', compact('user'));
     }
 
     // View a specific user
@@ -64,35 +68,111 @@ class UsersController extends Controller
         return view('users.edit', compact('user'));
     }
 
-    // Performs an update to the selected user's password
-    public function update(User $user)
+    /**
+     * Shows the password change form for the currently logged in user
+     */
+    public function showChangePasswordForm()
     {
-        $this->authorize('update', $user);
+        return view('users.changePassword');
+    }
 
-        $attributes = request()->validate([
-            'old-password' => 'required',
-            'password' => 'required:old-password|string|min:8|confirmed',
-        ]);
-
-        // Check if the old password matches the current password
-        $currentPassword = auth()->user()->password;
-
-        if (Hash::check($attributes['old-password'], $currentPassword))
-        {
-            // Hash the new password
-            $attributes['password'] = Hash::make($attributes['password']);
+    /**
+     * Attempts to change the password by
+     * 1. Verify that the old password matches the new password
+     * 2. New password matches confirmed new password
+     *
+     * @param \Illuminate\Http\Request $request
+     */
+    public function changePassword(Request $request)
+    {
+        // Check if the old password doesn't match the current user's password
+        if (!Hash::check($request->old_password, auth()->user()->password)) {
+            // If so redirect back to the previous page with errors
+            return redirect()->back()->withErrors(['old_password' => 'password doesn\'t match the currently logged in user']);
         }
-        else
-        {
-            return redirect()->back()->withErrors(['old-password', 'password does not match existing password']);
+        // Attempt to validate the password
+        $request->validate(['password' => 'required|confirmed|min:8']);
+
+        // Update the password to the new hashed password
+        auth()->user()->password = Hash::make($request->password);
+        auth()->user()->save();
+        return redirect()->back()->with(['success' => 'Password successfullychanged!'])->withInput();
+    }
+
+    /**
+     * Updates both the user's account, and the user's profile
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\User $user
+     */
+    public function update(Request $request, User $user)
+    {
+        // Check if the user is able to update the password, username and email
+        $userAttributes = [];
+        $profileAttributes = [];
+
+        if (auth()->user()->can('updateElevate', $user)) {
+            $rules = [];
+
+            // Since name, email, and password are all optional only add rules for validation
+            // If the resource is the same, do not apply the rules
+            if ($user->name !== $request->name) {
+                $rules['name'] = User::rules()['name'];
+            }
+
+            if ($user->email !== $request->email) {
+                $rules['email'] = User::rules()['email'];
+            }
+
+            // If no new password was added, do not add a validation rule for passwords
+            if (isset($request->password) || isset($request->password_confirmation)) {
+                $rules['password'] = User::rules()['password'];
+            }
+            $request->validate($rules);
+
+            // Manually assign new values based on which rules where created
+            $userAttributes['name'] = array_key_exists('name', $rules) ? $request->name : $user->name;
+            $userAttributes['email'] = array_key_exists('email', $rules) ? $request->email : $user->email;
+            $userAttributes['password'] = array_key_exists('password', $rules) ? Hash::make($request->password) : $user->password;
         }
 
-        // Save the new password to the user
-        $user->update($attributes);
+        // Check if the user is able to update the first name, family name, avatar, and social
+        if (auth()->user()->can('updateProfile', $user)) {
+            $rules = [
+                'first_name' => User::rules()['first_name'],
+                'family_name' => User::rules()['family_name'],
+                'social' => User::rules()['social'],
+            ];
+
+            // Only do the avatar rule if one is selected
+            if (isset($request->avatar)) {
+                $rules['avatar'] = User::rules()['avatar'];
+            }
+            $request->validate($rules);
+
+            // If the rule exists for avatar, that means the user wants to update their avatar.
+            // Replicate the method of creating avatars from the User model.
+            if (array_key_exists('avatar', $rules)) {
+                $avatarName = $user->id . '_avatar' . time() . '.' . $request->avatar->getClientOriginalExtension();
+                $request->avatar->storeAs('avatars', $avatarName);
+                $avatarName = '/storage/avatars/' . $avatarName;
+            }
+
+            // Assign profile attributes
+            $profileAttributes['first_name'] = $request->first_name;
+            $profileAttributes['family_name'] = $request->family_name;
+            $profileAttributes['social'] = $request->social;
+            $profileAttributes['avatar'] = isset($avatarName) ? $avatarName : $user->profile->avatar;
+        }
+
+        // If all validation succeeds update both the user and the profile
+        $user->update($userAttributes);
         $user->save();
+        $user->profile->update($profileAttributes);
+        $user->profile->save();
 
-        // Return with success
-        return back()->with('success', 'Your user settings has been successfully updated.');
+        // If successfull notify the user that their account has been updated
+        return redirect()->back()->with(['success' => 'All form inputs validated successfully!']);
     }
 
     // Performs an update to the selected user's profile
@@ -141,8 +221,6 @@ class UsersController extends Controller
                 return redirect()->back()->withErrors(['email' => trans($response)]);
         }
 
-
-
         return redirect()->back()->with('success', 'A password reset notification has been sent to the user');
     }
 
@@ -155,12 +233,21 @@ class UsersController extends Controller
             'role' => ['required', 'regex:/^((user)|(user-admin)|(admin))$/i']
         ]);
 
+        // Remove all roles
         $user->removeRole('user');
         $user->removeRole('user-admin');
         $user->removeRole('admin');
 
+        // Assign and apply the new role
         $user->assignRole($attributes['role']);
         $user->save();
+
+        if (auth()->user()->can('update', $user)) {
+            // If the user can still change the account redirect back
+            return redirect()->back()->with(['success' => 'The user\'s role has been changed']);
+        } else {
+            return redirect()->route('users.index', ['success' => 'The user\'s role has been changed.']);
+        }
 
         return back();
     }

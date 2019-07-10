@@ -32,7 +32,7 @@ Route::name('api.')->group(function() {
 
     Route::apiResource('bookmarks', 'API\BookmarksController');
     Route::match(['put', 'patch'], 'bookmarks/{bookmark}/tag/attach', 'API\BookmarksController@attachTag')->name('bookmarks.tag.attach');
-    Route::delete('bookmarks/{bookmark}/{tag}', 'API\BookmarksController@detachTag')->name('bookmarks.tag.detach');
+    Route::delete('bookmarks/{bookmark}/tag/{tag}/detach', 'API\BookmarksController@detachTag')->name('bookmarks.tag.detach');
 
     // Tag routes
     Route::name('tags.')->group(function() {

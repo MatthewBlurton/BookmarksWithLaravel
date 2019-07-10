@@ -15,7 +15,7 @@
     <div class="row">
         <div class="col">
             @component('components.errors')
-                <strong>Whoops!</strong> Could not change {{$bookmark->title}} for the following reasons.
+                Could not change {{$bookmark->title}} for the following reasons.
             @endcomponent
         </div>
     </div>

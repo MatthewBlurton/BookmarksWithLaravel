@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Profile extends Model
 {
-    // All fields accessible for mass assignment
-    protected $guarded = [];
+    // All fields except the id's are available for mass assignment
+    protected $guarded = ['id, user_id'];
 
-    protected $hidden = ['id', 'user_id', 'created_at', 'updated_at'];
+    // The id of the profile is hidden because the user_id is more important
+    protected $hidden = ['id'];
 
     public function user()
     {

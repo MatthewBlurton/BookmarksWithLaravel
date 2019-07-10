@@ -46,14 +46,14 @@ class User extends Authenticatable implements MustVerifyEmail
      * Rules used for validation purposes
      * @var rules
      */
-    private static $rules = [
+    protected static $rules = [
         'name' => 'required|string|max:255|unique:users',
         'email' => 'required|string|email|max:255|unique:users',
         'password' => 'required|string|min:8|confirmed',
         'first_name' => 'required|string|max:128',
         'family_name' => 'required|string|max:128',
-        'avatar' => 'sometimes|required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'social' => 'sometimes|required|url',
+        'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'social' => 'nullable|url',
     ];
 
     use HasRoles;
@@ -101,13 +101,19 @@ class User extends Authenticatable implements MustVerifyEmail
             $data['avatar']->storeAs('avatars', $avatarName);
             $avatarName = '/storage/avatars/' . $avatarName;
         }
-        $profile = Profile::create([
-            'user_id' => $user->id,
+
+        // mass assign attributes to profile
+        $profile = new Profile();
+        $profile->fill([
             'first_name' => $data['first_name'],
             'family_name' => $data['family_name'],
             'avatar' => $avatarName,
             'social' => array_key_exists('social', $data) ? $data['social'] : null,
         ]);
+
+        // assign user id to the currently created user
+        $profile->user_id = $user->id;
+        $profile->save();
 
         return $user;
     }
