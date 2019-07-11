@@ -61,6 +61,7 @@
     </div>
 
     {{-- Owned Bookmarks --}}
+    @if ($user->bookmarks->count() > 0)
     <div class="row">
         <div class="col">
             <div class="card">
@@ -99,5 +100,7 @@
             </div>
         </div>
     </div>
+    @endif
+
 </div>
 @endsection

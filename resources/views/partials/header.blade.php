@@ -45,14 +45,8 @@
                                 @csrf
                         </form>
                         <div class="dropdown-divider"></div>
-
                         <a href="/users/{{ Auth::user()->id }}" class="dropdown-item">My account</a>
                         <a href="/users/{{ Auth::user()->id }}/edit" class="dropdown-item">Change my account</a>
-                        <a href="/users" class="dropdown-item">All users</a>
-                        <div class="dropdown-divider"></div>
-
-                        <a href="/bookmarks" class="dropdown-item">All Bookmarks</a>
-
                     </div>
                 </li>
                 @endguest
