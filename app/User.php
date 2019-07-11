@@ -104,23 +104,6 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         return Bookmark::where('user_id', $this->id)->where('is_public', true)->orderBy('updated_at', 'DESC')->take(5)->get();
-
-        // // Paginate check: is the user a guest, has the user verified their email, and is the user not suspended?
-        // if ($user && $user->hasVerifiedEmail() && !$user->hasRole('suspended'))
-        // {
-        //     // Check if the user has permission to access all bookmarks, then return all the bookmarks no matter if they are private or public
-        //     // Otherwise only return the bookmark if any of the following conditions are true
-        //     // 1. The bookmark is owned by the currently logged in user
-        //     // 2. The bookmark is set to public
-        //     return $user->hasPermissionTo('access all bookmarks')
-        //         ? Bookmark::orderBy('updated_at', 'DESC')->paginate(5)
-        //         : Bookmark::where('user_id', $user->id)->orWhere('is_public', true)
-        //             ->orderBy('updated_at', 'DESC')->paginate(5);
-        // }
-        // else { // If the paginate check fails, only grab 10 of the latest PUBLIC bookmarks.
-        //     return Bookmark::where('is_public', true)->orderBy('updated_at', 'DESC')
-        //         ->take(5)->get();
-        // }
     }
 
 

@@ -43,11 +43,11 @@ class Tag extends Model
         // If the user is logged in and the email is verified, and the bookmark is public, show each bookmark associated with this tag
         if ($user && !$user->hasRole('suspended') && $user->hasVerifiedEmail()) {
             return $user->hasPermissionTo('access all bookmarks')
-                ? $this->bookmarks()->orderBy('updated_at', 'DESC')->paginate(5)
-                : $this->bookmarks()->where('user_id', auth()->id())->orWhere('is_public', true)
+                ? $this->bookmarks()->wherePivot('tag_id', $this->id)->orderBy('updated_at', 'DESC')->paginate(5)
+                : $this->bookmarks()->wherePivot('tag_id', $this->id)->whereRaw('(user_id = ' . auth()->id() . ' || is_public = true)')
                     ->orderBy('updated_at', 'DESC')->paginate(5);
         } else {// Otherwise only show 5 of the most popular
-            return $this->bookmarks()->where('is_public', true)->orderBy('updated_at', 'DESC')
+            return $this->bookmarks()->wherePivot('tag_id', $this->id)->where('is_public', true)->orderBy('updated_at', 'DESC')
                         ->take(5)->get();
         }
     }
