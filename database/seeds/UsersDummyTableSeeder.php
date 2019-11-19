@@ -44,11 +44,27 @@ class UsersDummyTableSeeder extends Seeder
         $profile = factory('App\Profile')->make()->getAttributes();
         Profile::create($profile + ['user_id' => $user->id]);
 
-        // Create the unverified user
+        // Create a standard user
         $user = User::create([
             'name'		=> 'User',
             'email'		=> 'user@crosslink.com',
             'password'	=> bcrypt('password'),
+            'email_verified_at' => now(),
+        ]);
+
+        // Assign the user a standard user role.
+        $user->assignRole('user');
+
+        // Create and assign a profile to the user
+        $profile = factory('App\Profile')->make()->getAttributes();
+        Profile::create($profile + ['user_id' => $user->id]);
+
+        // Create a non-verified user
+        $user = User::create([
+            'name'      => 'User Unverified',
+            'email'     => 'useruv@crosslink.com',
+            'password'  => bcrypt('password'),
+            'email_verified_at' => now(),
         ]);
 
         // Assign the admin role to user

@@ -19,15 +19,15 @@ class BookmarksTableSeeder extends Seeder
                 }
         });
 
-        for ($i = 0; $i < 20; $i++) {
-            $bookmark = App\Bookmark::create([
-                'title'         => "Google $i",
-                'url'           => 'https://www.google.com',
-                'description'   => 'Search engine with no privacy',
-                'user_id'       => 1,
-                'is_public'     => true,
-            ]);
-            $bookmark->attachTag('Web Search');
-        }
+        // for ($i = 0; $i < 20; $i++) {
+        //     $bookmark = App\Bookmark::create([
+        //         'title'         => "Google $i",
+        //         'url'           => 'https://www.google.com',
+        //         'description'   => 'Search engine with no privacy',
+        //         'user_id'       => 1,
+        //         'is_public'     => true,
+        //     ]);
+        //     $bookmark->attachTag('Web Search');
+        // }
     }
 }
