@@ -74,7 +74,9 @@
                         <div class="col">
                             <ul class="list-group">
                                 @foreach ($bookmark->tags as $aTag)
-                                <li class="list-group-item"><a href="{{ back() }}" class="badge badge-secondary"><strong>{{ $aTag->name }}</strong></a></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <p class="h4"><a href="{{ route('tags.show', $aTag) }}" class="badge badge-secondary"><strong>{{ $aTag->name }}</strong></a></p>
+                                </li>
                                 @endforeach
                             </ul>
                         </div>
