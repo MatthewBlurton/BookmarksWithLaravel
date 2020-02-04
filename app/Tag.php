@@ -24,9 +24,9 @@ class Tag extends Model
     public static function getFilteredTags(?User $user)
     {
         if ($user && $user->hasVerifiedEmail() && !$user->hasRole('suspended')) {
-            return Tag::orderBy('updated_at', 'DESC')->paginate(5);
+            return Tag::orderBy('popularity', 'DESC')->paginate(5);
         } else {// Otherwise only show 5 of the most popular
-            return Tag::orderBy('updated_at', 'DESC')->take(5)->get();
+            return Tag::orderBy('popularity', 'DESC')->take(5)->get();
         }
     }
 

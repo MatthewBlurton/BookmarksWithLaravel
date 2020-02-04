@@ -59,7 +59,8 @@ class Bookmark extends Model
     {
         $tag = Tag::firstOrCreate(['name' => $tagName]);
         // Manually sync updated_at of tag to current time
-        $tag->touch();
+        $tag->popularity = $tag->popularity + 1;
+        $tag->save();
         $this->tags()->syncWithoutDetaching([$tag->id]);
 
         // return the tag
