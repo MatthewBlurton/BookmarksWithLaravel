@@ -1,0 +1,6 @@
+mysql
+src/node_modules
+src/vendor
+.gitattributes
+.gitignore
+README.md
