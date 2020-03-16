@@ -51,3 +51,34 @@ services:
 
         networks:
             - laravel
+    
+    composer:
+        container_name: composer
+        image: composer:1.10.0
+        volumes:
+            - ./src:/var/www/html
+        working_dir: /var/www/html
+        networks:
+            - laravel
+    npm:
+        container_name: npm
+        image: node:12.16.1
+        volumes:
+            - './src:/var/www/html'
+        working_dir: '/var/www/html'
+        entrypoint: ['npm']
+        networks:
+            - laravel
+    artisan:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: artisan
+        volumes:
+            - ./src:/var/www/html
+        depends_on:
+            - mysql
+        working_dir: /var/www/html
+        entrypoint: ['/var/www/html/artisan']
+        networks:
+            - laravel
